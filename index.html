@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AWENA STORE — فرۆشگای ئاوێنە دیتەیڵینگ</title>
+  
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#0d1117">
+  <meta name="mobile-web-app-capable" content="yes">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              dark: '#0d1117',
+              card: '#161b22',
+              border: '#30363d'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap');
+    body { font-family: 'Vazirmatn', sans-serif; -webkit-tap-highlight-color: transparent; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-brand-dark text-slate-100 min-h-screen pb-24 select-none">
+
+  <!-- ==========================================
+       1. سەرپەڕەی فرۆشگا (Header)
+       ========================================== -->
+  <header class="sticky top-0 z-40 bg-brand-card/95 backdrop-blur border-b border-brand-border px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-2.5">
+      <!-- لۆگۆ: ٣ جار لێدانی خێرا بۆ کردنەوەی ڕەمزی بەڕێوەبەر -->
+      <div onclick="handleSecretLogoClick()" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-sky-400 flex items-center justify-center shadow-lg shadow-sky-500/20 font-black text-xl text-white cursor-pointer active:scale-95 transition">
+        A
+      </div>
+      <div>
+        <h1 class="font-extrabold text-sm tracking-wide text-white">AWENA STORE</h1>
+        <p class="text-[10px] text-slate-400">کوالێتی لە وردەکارییە</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-1.5">
+      <!-- دوگمەی دابەزاندنی ئەپڵیکەیشن بۆ کڕیار -->
+      <button id="pwaInstallBtn" onclick="installPWA()" class="hidden px-2.5 py-1.5 text-[10px] font-bold rounded-xl bg-slate-800 border border-brand-border text-brand-400 flex items-center gap-1 shadow">
+        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+        <span>دابەزاندن</span>
+      </button>
+
+      <!-- دوگمەی بەڕێوەبەر (کە خۆت ڕەمزت لێدا دیار دەبێت) -->
+      <div id="adminBadgeArea" class="hidden flex items-center gap-1">
+        <button onclick="toggleAdminViewMode()" id="adminViewToggleBtn" class="px-2 py-1 text-[10px] font-bold rounded-lg bg-amber-500 text-slate-950 flex items-center gap-1 shadow">
+          <i data-lucide="layout" class="w-3 h-3"></i>
+          <span id="adminToggleLabel">بەڕێوەبەر</span>
+        </button>
+        <button onclick="logoutAdmin()" class="p-1 bg-rose-500/10 text-rose-400 rounded-lg border border-rose-500/20" title="دەرچوون">
+          <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       2. شاشەی کڕیار (Storefront)
+       ========================================== -->
+  <main id="storefrontView" class="max-w-md mx-auto p-4 space-y-4">
+    
+    <!-- دروشم و دوگمەی ڕاوێژی واتسئەپ -->
+    <div class="bg-gradient-to-b from-brand-card to-slate-900 p-3.5 rounded-2xl border border-brand-border text-center space-y-2 shadow-xl">
+      <span class="text-[10px] bg-brand-500/20 text-brand-400 border border-brand-500/30 px-2 py-0.5 rounded-full font-bold">فرۆشگای فەرمی ئاوێنە دیتەیڵینگ</span>
+      <h2 class="text-sm font-black text-white">مەوادی ئەسڵی پۆڵیش، نانۆ و کارکێر</h2>
+      
+      <a href="https://api.whatsapp.com/send?phone=9647501234567&text=سڵاو،%20لە%20فرۆشگای%20AWENA%20STORE%20پەیوەندی%20دەکەم،%20ڕاوێژێکم%20ویست%20دەربارەی%20مەوادەکانتان." 
+         target="_blank" 
+         class="w-full py-2 px-3 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition">
+        <i data-lucide="message-circle" class="w-4 h-4"></i>
+        <span>پرسیار و ڕاوێژ لەگەڵ پسپۆڕ لە واتسئەپ</span>
+      </a>
+    </div>
+
+    <!-- گەڕانی خێرا -->
+    <div class="relative">
+      <i data-lucide="search" class="w-4 h-4 absolute top-3.5 start-3 text-slate-400"></i>
+      <input type="text" id="storeSearchInput" oninput="handleSearch(this.value)" placeholder="گەڕان بۆ مەواد، براند، شامپۆ، پاد..." 
+             class="w-full bg-brand-card border border-brand-border rounded-xl py-2.5 ps-9 pe-4 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500">
+    </div>
+
+    <!-- بەشە سەرەکییەکان (Main Categories Carousel) -->
+    <div class="space-y-1.5">
+      <div id="mainCategoriesList" class="flex gap-1.5 overflow-x-auto pb-1 hide-scrollbar text-xs"></div>
+    </div>
+
+    <!-- ژێر-بەشەکان و براندەکان (Subcategories / Brands) -->
+    <div id="subcategoriesSection" class="hidden space-y-1">
+      <div id="subcategoriesList" class="flex gap-1.5 overflow-x-auto pb-1 hide-scrollbar text-[11px]"></div>
+    </div>
+
+    <!-- بارکردنی ڕیزبەندی و ژمێرەری کاڵاکان -->
+    <div class="flex items-center justify-between text-xs px-1">
+      <div class="flex items-center gap-1.5">
+        <span class="text-slate-400">ڕیزبەندی:</span>
+        <select id="sortSelector" onchange="handleSortChange(this.value)" class="bg-brand-card border border-brand-border text-white text-[11px] rounded-lg px-2 py-1 focus:outline-none">
+          <option value="newest">نوێترین</option>
+          <option value="oldest">کۆنترین</option>
+          <option value="price_low">کەمترین نرخ</option>
+          <option value="price_high">بەرزترین نرخ</option>
+        </select>
+      </div>
+      <span class="text-[11px] text-brand-400 font-bold bg-brand-500/10 px-2 py-0.5 rounded-full border border-brand-500/20" id="productCountBadge">0 کاڵا</span>
+    </div>
+
+    <!-- لیستی کاڵاکان بە دوو ستوون (2-Column Product Grid) -->
+    <div id="productsGrid" class="grid grid-cols-2 gap-2.5"></div>
+  </main>
+
+  <!-- ==========================================
+       3. سەبەتەی سەرئاوکەوتووی خوارەوە (Floating Cart Bar)
+       ========================================== -->
+  <div id="floatingCartBar" class="hidden fixed bottom-3 left-4 right-4 z-40 max-w-md mx-auto">
+    <div onclick="openCheckoutModal()" class="bg-gradient-to-r from-brand-600 to-sky-500 hover:from-brand-500 text-white p-3 rounded-2xl shadow-2xl shadow-sky-600/40 flex items-center justify-between cursor-pointer active:scale-[0.99] transition border border-sky-400/30">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-xl bg-black/20 flex items-center justify-center font-bold text-xs" id="cartBadgeCount">0</div>
+        <div>
+          <span class="text-[10px] text-sky-100 block">سەبەتەی کڕین</span>
+          <span class="text-xs font-black" id="cartTotalPreview">0 د.ع</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-1 text-xs font-extrabold bg-black/20 px-3 py-1.5 rounded-xl">
+        <span>تەواوکردنی کڕین</span>
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       4. مۆداڵی تەواوکردنی کڕین و پسوڵە (Checkout Drawer)
+       ========================================== -->
+  <div id="checkoutModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-brand-card w-full max-w-md max-h-[92vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-brand-border shadow-2xl p-4 space-y-3.5 text-xs">
+      
+      <div class="flex items-center justify-between border-b border-brand-border pb-2.5">
+        <h3 class="font-bold text-sm text-white flex items-center gap-1.5">
+          <i data-lucide="shopping-bag" class="w-4 h-4 text-brand-400"></i>
+          <span>تەواوکردنی داواکاری و گەیاندن</span>
+        </h3>
+        <button onclick="closeCheckoutModal()" class="text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <!-- کاڵاکانی ناو سەبەتە -->
+      <div class="space-y-2">
+        <span class="text-slate-400 font-semibold block text-[11px]">کاڵا هەڵبژێردراوەکان:</span>
+        <div id="cartItemsList" class="space-y-1.5 max-h-36 overflow-y-auto p-2 bg-slate-900/60 rounded-xl border border-brand-border"></div>
+      </div>
+
+      <!-- فۆڕمی زانیاری کڕیار بۆ گەیاندن -->
+      <form onsubmit="handleSendWhatsAppOrder(event)" class="space-y-2.5">
+        <div>
+          <label class="text-slate-300 block mb-1">ناوی سیانیت *</label>
+          <input type="text" id="order_name" required placeholder="سۆران ئەحمەد" class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-white focus:outline-none focus:border-brand-500">
+        </div>
+        <div>
+          <label class="text-slate-300 block mb-1">ژمارەی مۆبایل *</label>
+          <input type="tel" id="order_phone" required placeholder="0750 123 4567" class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-white dir-ltr text-right focus:outline-none focus:border-brand-500">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-slate-300 block mb-1">شار *</label>
+            <select id="order_city" onchange="calculateOrderDelivery()" required class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-white focus:outline-none">
+              <!-- شارەکان خۆکار لە سێرڤەر باردەبن -->
+            </select>
+          </div>
+          <div>
+            <label class="text-slate-300 block mb-1">کرێی گەیاندن</label>
+            <input type="text" id="order_delivery_display" readonly class="w-full bg-slate-900 border border-brand-border rounded-xl p-2.5 text-brand-400 font-bold">
+          </div>
+        </div>
+        <div>
+          <label class="text-slate-300 block mb-1">ناونیشانی تەواو (گەڕەک، شەقام، نزیکترین شوێن) *</label>
+          <input type="text" id="order_address" required placeholder="سلێمانی - گەڕەکی بەختیاری، بەرامبەر پارکی ئازادی" class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-white focus:outline-none">
+        </div>
+
+        <!-- حیساباتی کۆتایی -->
+        <div class="p-3 bg-slate-900/90 rounded-xl border border-brand-border space-y-1 text-xs">
+          <div class="flex justify-between text-slate-400"><span>کۆی کاڵاکان:</span><span id="orderSubtotalText">0 د.ع</span></div>
+          <div class="flex justify-between text-slate-400"><span>کرێی گەیاندن:</span><span id="orderDeliveryFeeText">0 د.ع</span></div>
+          <div class="flex justify-between text-emerald-400 font-black text-sm pt-1 border-t border-brand-border">
+            <span>کۆی گشتی بۆ وەرگرتن:</span><span id="orderGrandTotalText">0 د.ع</span>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] text-white font-extrabold text-sm rounded-xl shadow-lg shadow-emerald-700/30 flex items-center justify-center gap-2 transition">
+          <i data-lucide="message-circle" class="w-4 h-4"></i>
+          <span>ناردنی داواکاری لە واتسئەپ</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       5. پەنجەرەی ڕوونکردنەوەی کاڵا (Product Detail Modal)
+       ========================================== -->
+  <div id="productDetailModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-brand-card w-full max-w-md max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-brand-border shadow-2xl p-4 space-y-3.5 text-xs">
+      <div class="flex items-center justify-between border-b border-brand-border pb-2">
+        <span class="text-[10px] text-brand-400 font-bold" id="modalProductBrand">براند</span>
+        <button onclick="closeProductDetailModal()" class="text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="h-56 bg-slate-900 rounded-xl overflow-hidden border border-brand-border flex items-center justify-center">
+        <img id="modalProductImg" src="" class="w-full h-full object-contain">
+      </div>
+
+      <div>
+        <h3 class="font-extrabold text-base text-white" id="modalProductTitle">ناوی کاڵا</h3>
+        <span class="text-emerald-400 font-black text-sm block mt-1" id="modalProductPrice">0 د.ع</span>
+      </div>
+
+      <div class="p-3 bg-slate-900/70 rounded-xl border border-brand-border space-y-1">
+        <span class="text-brand-400 font-semibold block text-[11px]">ڕێنمایی و چۆنیەتی بەکارهێنان:</span>
+        <p class="text-slate-300 leading-relaxed text-[11px]" id="modalProductDesc">ڕوونکردنەوە لێرە دەردەکەوێت.</p>
+      </div>
+
+      <div class="flex items-center gap-3 pt-1">
+        <button onclick="addProductFromModalToCart()" class="flex-1 py-3 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl shadow-lg shadow-sky-600/30 flex items-center justify-center gap-2">
+          <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+          <span>خستنە سەبەتەی کڕین</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       6. شاشەی بەڕێوەبەر (Admin Back-Office)
+       ========================================== -->
+  <main id="adminView" class="max-w-md mx-auto p-4 space-y-4 hidden">
+    
+    <!-- داشبۆردی دارایی و ژمێریاریی خۆکار -->
+    <div class="grid grid-cols-2 gap-2.5">
+      <div class="bg-brand-card p-3 rounded-2xl border border-brand-border space-y-1">
+        <span class="text-[10px] text-slate-400 block">داهاتی گشتی فرۆش</span>
+        <span class="text-base font-black text-white" id="statRevenue">0 <span class="text-[9px]">د.ع</span></span>
+      </div>
+      <div class="bg-brand-card p-3 rounded-2xl border border-brand-border space-y-1">
+        <span class="text-[10px] text-emerald-400 font-bold block">قازانجی سافی و ڕاستەقینە</span>
+        <span class="text-base font-black text-emerald-400" id="statProfit">0 <span class="text-[9px]">د.ع</span></span>
+      </div>
+      <div class="bg-brand-card p-3 rounded-2xl border border-brand-border space-y-1">
+        <span class="text-[10px] text-slate-400 block">سەرمایەی مەواد (جوملە)</span>
+        <span class="text-base font-black text-slate-300" id="statCost">0 <span class="text-[9px]">د.ع</span></span>
+      </div>
+      <div class="bg-brand-card p-3 rounded-2xl border border-brand-border space-y-1">
+        <span class="text-[10px] text-slate-400 block">کاڵاکانی مەخزەن</span>
+        <span class="text-base font-black text-amber-400" id="statStockTotal">0 دانە</span>
+      </div>
+    </div>
+
+    <!-- داواکارییە گەیشتووەکان لە واتسئەپ (بژاردەی ٢: پەسەندکردنی ١-چرکە) -->
+    <div class="bg-brand-card p-3 rounded-2xl border border-brand-border space-y-2">
+      <div class="flex items-center justify-between">
+        <h3 class="font-bold text-xs text-white flex items-center gap-1.5">
+          <i data-lucide="bell" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span>داواکارییە چاوەڕوانکراوەکان</span>
+        </h3>
+        <span class="text-[10px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full font-mono font-bold" id="pendingOrdersCount">0</span>
+      </div>
+      <div id="pendingOrdersList" class="space-y-2"></div>
+    </div>
+
+    <!-- دوگمەی زیادکردنی کاڵای نوێ و بەشەکان -->
+    <div class="grid grid-cols-2 gap-2">
+      <button onclick="openNewProductModal()" class="py-3 px-3 bg-brand-600 hover:bg-brand-500 active:scale-[0.99] text-white font-bold text-xs rounded-xl shadow-lg shadow-sky-600/30 flex items-center justify-center gap-1.5">
+        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+        <span>زیادکردنی کاڵا</span>
+      </button>
+      <button onclick="openCategoryManagerModal()" class="py-3 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-brand-border flex items-center justify-center gap-1.5">
+        <i data-lucide="folder-plus" class="w-4 h-4"></i>
+        <span>بەش و براندەکان</span>
+      </button>
+    </div>
+
+    <!-- ڕێکخستنی کرێی گەیاندنی شارەکان -->
+    <div class="bg-brand-card p-3 rounded-2xl border border-brand-border space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-bold text-slate-300">کرێی گەیاندنی شارەکان (شیاوی دەستکاری)</span>
+        <button onclick="saveDeliveryRates()" class="text-[11px] text-brand-400 font-bold hover:underline">پاشەکەوتکردن</button>
+      </div>
+      <div id="adminDeliveryRatesList" class="grid grid-cols-2 gap-2 text-xs"></div>
+    </div>
+
+    <!-- سەرجەم کاڵاکان لە مەخزەن -->
+    <div class="space-y-2">
+      <h3 class="text-xs font-bold text-slate-400 px-1">سەرجەم کاڵاکانی ناو دوکان</h3>
+      <div id="adminProductsList" class="space-y-2"></div>
+    </div>
+  </main>
+
+  <!-- ==========================================
+       7. مۆداڵی داخڵکردنی کاڵای نوێ لە مەخزەن
+       ========================================== -->
+  <div id="productFormModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-brand-card w-full max-w-md max-h-[92vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-brand-border shadow-2xl p-4 space-y-3.5 text-xs">
+      <div class="flex items-center justify-between border-b border-brand-border pb-2.5">
+        <h3 class="font-bold text-sm text-white" id="productModalTitle">زیادکردنی کاڵای نوێ</h3>
+        <button onclick="closeProductFormModal()" class="text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="handleProductFormSubmit(event)" class="space-y-3">
+        <div>
+          <label class="text-slate-300 block mb-1">ناوی کاڵا (لەگەڵ قەبارەکەی) *</label>
+          <input type="text" id="prod_name" required placeholder="وەک: ZviZZer Heavy Cut 250ml" class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-white focus:outline-none focus:border-brand-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-slate-300 block mb-1">بەشی سەرەکی *</label>
+            <select id="prod_category" onchange="updateSubcatOptionsForForm()" required class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-white focus:outline-none"></select>
+          </div>
+          <div>
+            <label class="text-slate-300 block mb-1">ژێر-بەش / براند</label>
+            <select id="prod_subcategory" class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-white focus:outline-none"></select>
+          </div>
+        </div>
+
+        <!-- حیساباتی فرۆش و نرخی جوملە بۆ قازانج -->
+        <div class="grid grid-cols-2 gap-2 bg-slate-900/70 p-2.5 rounded-xl border border-brand-border">
+          <div>
+            <label class="text-emerald-400 font-bold block mb-1">نرخی فرۆشتن بە کڕیار *</label>
+            <input type="number" id="prod_price_sale" required placeholder="25000" class="w-full bg-slate-800 border border-brand-border rounded-xl p-2 text-emerald-400 font-black focus:outline-none">
+          </div>
+          <div>
+            <label class="text-amber-400 font-bold block mb-1">نرخی کڕین (جوملە) *</label>
+            <input type="number" id="prod_price_cost" required placeholder="18000" class="w-full bg-slate-800 border border-brand-border rounded-xl p-2 text-amber-400 font-black focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="text-slate-300 block mb-1">ژمارەی بەردەست لە مەخزەن *</label>
+          <input type="number" id="prod_stock" required value="10" class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-white focus:outline-none">
+        </div>
+
+        <div>
+          <label class="text-slate-300 block mb-1">ڕێنمایی و چۆنیەتی بەکارهێنان بە کوردی</label>
+          <textarea id="prod_desc" rows="2" placeholder="بۆ سڕینەوەی کڕانی قووڵ بەکاردێت بە پادی پۆڵیشی زڤایزەر..." class="w-full bg-slate-800 border border-brand-border rounded-xl p-2 text-white focus:outline-none"></textarea>
+        </div>
+
+        <div>
+          <label class="text-slate-300 block mb-1">وێنەی کاڵا (لە گەلەری یان کامێرا)</label>
+          <input type="file" id="prod_image_input" accept="image/*" class="w-full bg-slate-800 border border-brand-border rounded-xl p-2 text-slate-400 text-xs">
+        </div>
+
+        <button type="submit" id="prodSubmitBtn" class="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl shadow-lg shadow-sky-600/30">
+          پاشەکەوتکردن لە مەخزەن
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       8. مۆداڵی بەڕێوەبەری بەشەکان و براندەکان
+       ========================================== -->
+  <div id="categoryManagerModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-brand-card w-full max-w-md max-h-[92vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-brand-border shadow-2xl p-4 space-y-3.5 text-xs">
+      <div class="flex items-center justify-between border-b border-brand-border pb-2.5">
+        <h3 class="font-bold text-sm text-white">بەڕێوەبردنی بەشەکان و براندەکان</h3>
+        <button onclick="closeCategoryManagerModal()" class="text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <!-- زیادکردنی بەشی سەرەکی -->
+      <div class="space-y-1.5 bg-slate-900/60 p-2.5 rounded-xl border border-brand-border">
+        <span class="text-slate-300 font-bold block">زیادکردنی بەشی سەرەکی نوێ:</span>
+        <div class="flex gap-2">
+          <input type="text" id="new_cat_name" placeholder="وەک: پۆڵیش و نانۆ" class="flex-1 bg-slate-800 border border-brand-border rounded-xl p-2 text-white">
+          <button onclick="handleAddNewCategory()" class="py-2 px-3 bg-brand-600 text-white font-bold rounded-xl">زیادکردن</button>
+        </div>
+      </div>
+
+      <!-- لیستی بەشەکان لەگەڵ ژێر-بەش و براندەکانیان -->
+      <div id="categoriesManagerList" class="space-y-2"></div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       9. کۆدی جاڤاسکریپت و بەستنەوەی سێرڤەر
+       ========================================== -->
+  <script>
+    const SUPABASE_URL = 'https://yryszfvdokaplaweqatj.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyeXN6ZnZkb2thcGxhd2VxYXRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyMDQ3NjgsImV4cCI6MjEwODc4MDc2OH0.aMJQI1EvLr1Yf6vEzj9rDEsGzLZByyzZQWbQrqSb3WQ';
+    const ADMIN_PIN = 'AWENA2003';
+
+    const dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let categories = [];
+    let products = [];
+    let deliveryRates = [];
+    let orders = [];
+    let cart = [];
+
+    let activeCategory = 'all';
+    let activeSubcategory = 'all';
+    let currentSort = 'newest';
+    let searchQuery = '';
+    let selectedModalProduct = null;
+    let editingProductId = null;
+
+    let isAdminUnlocked = localStorage.getItem('awena_store_admin') === 'true';
+    let secretLogoClicks = 0;
+    let secretLogoTimer = null;
+    let deferredPrompt = null;
+
+    /* PWA Install Event */
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('pwaInstallBtn').classList.remove('hidden');
+    });
+
+    function installPWA() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => {
+          deferredPrompt = null;
+          document.getElementById('pwaInstallBtn').classList.add('hidden');
+        });
+      }
+    }
+
+    /* پەیوەندی و لێدانی ٣ جار لەسەر لۆگۆ بۆ بەڕێوەبەر */
+    function handleSecretLogoClick() {
+      secretLogoClicks++;
+      clearTimeout(secretLogoTimer);
+      secretLogoTimer = setTimeout(() => { secretLogoClicks = 0; }, 1500);
+
+      if (secretLogoClicks >= 3) {
+        secretLogoClicks = 0;
+        promptAdminLogin();
+      }
+    }
+
+    function promptAdminLogin() {
+      if (isAdminUnlocked) {
+        toggleAdminViewMode();
+        return;
+      }
+      const pin = prompt('تکایە ڕەمزی نهێنی بەڕێوەبەر بنووسە:');
+      if (pin === ADMIN_PIN) {
+        isAdminUnlocked = true;
+        localStorage.setItem('awena_store_admin', 'true');
+        alert('بەخێربێیت بۆ بەڕێوەبەرایەتی AWENA STORE!');
+        updateSecurityUI();
+      } else if (pin !== null) {
+        alert('ڕەمزی نهێنی هەڵەیە!');
+      }
+    }
+
+    function logoutAdmin() {
+      if (confirm('ئایا دڵنیایت لە دەرچوون لە بەشی بەڕێوەبەر؟')) {
+        isAdminUnlocked = false;
+        localStorage.removeItem('awena_store_admin');
+        updateSecurityUI();
+      }
+    }
+
+    function toggleAdminViewMode() {
+      const storefront = document.getElementById('storefrontView');
+      const adminView = document.getElementById('adminView');
+      const toggleLabel = document.getElementById('adminToggleLabel');
+
+      if (adminView.classList.contains('hidden')) {
+        adminView.classList.remove('hidden');
+        storefront.classList.add('hidden');
+        toggleLabel.innerText = 'فرۆشگا';
+      } else {
+        storefront.classList.remove('hidden');
+        adminView.classList.add('hidden');
+        toggleLabel.innerText = 'بەڕێوەبەر';
+      }
+      lucide.createIcons();
+    }
+
+    function updateSecurityUI() {
+      const adminBadge = document.getElementById('adminBadgeArea');
+      const storefront = document.getElementById('storefrontView');
+      const adminView = document.getElementById('adminView');
+
+      if (isAdminUnlocked) {
+        adminBadge.classList.remove('hidden');
+        adminView.classList.remove('hidden');
+        storefront.classList.add('hidden');
+        renderAdminDashboard();
+      } else {
+        adminBadge.classList.add('hidden');
+        adminView.classList.add('hidden');
+        storefront.classList.remove('hidden');
+      }
+      lucide.createIcons();
+    }
+
+    /* هێنانی هەموو داتاکان لە سێرڤەر */
+    async function loadAllData() {
+      try {
+        const [catRes, prodRes, delRes, ordRes] = await Promise.all([
+          dbClient.from('store_categories').select('*'),
+          dbClient.from('store_products').select('*').order('created_at', { ascending: false }),
+          dbClient.from('store_delivery_rates').select('*'),
+          dbClient.from('store_orders').select('*').order('created_at', { ascending: false })
+        ]);
+
+        if (catRes.data) categories = catRes.data;
+        if (prodRes.data) products = prodRes.data;
+        if (delRes.data) deliveryRates = delRes.data;
+        if (ordRes.data) orders = ordRes.data;
+
+        // ئەگەر بەش نەبوو لە سەرەتادا، چەند بەشێکی سەرەکی خۆکار دروست دەکات
+        if (categories.length === 0) {
+          await initDefaultCategories();
+        }
+
+        renderStorefront();
+        if (isAdminUnlocked) renderAdminDashboard();
+      } catch (err) {
+        console.error('هەڵە لە بارکردنی داتا:', err);
+      }
+    }
+
+    async function initDefaultCategories() {
+      const defaults = [
+        { id: 'cat-1', name: 'پۆڵیش و نانۆ', subcategories: ['ZviZZer', 'Koch-Chemie', 'Menzerna', 'Sonax'] },
+        { id: 'cat-2', name: 'مەوادی شوشتن', subcategories: ['شامپۆی نانۆ', 'پاککەرەوەی ویل', 'فۆم'] },
+        { id: 'cat-3', name: 'خاولی و مایکرۆفایبەر', subcategories: ['خاولی وشککردنەوە', 'پەڕۆی پۆڵیش'] }
+      ];
+      for (const c of defaults) {
+        await dbClient.from('store_categories').upsert(c);
+      }
+      const res = await dbClient.from('store_categories').select('*');
+      if (res.data) categories = res.data;
+    }
+
+    /* ==========================================================
+       دیدگای کڕیار (Storefront Logic)
+       ========================================================== */
+    function renderStorefront() {
+      renderCategoriesBar();
+      renderSubcategoriesBar();
+      renderProductsGrid();
+      updateCartUI();
+      lucide.createIcons();
+    }
+
+    function renderCategoriesBar() {
+      const container = document.getElementById('mainCategoriesList');
+      let html = `<button onclick="selectCategory('all')" class="cat-pill px-3 py-1.5 rounded-xl whitespace-nowrap font-bold text-xs transition ${activeCategory === 'all' ? 'bg-brand-500 text-white shadow' : 'bg-brand-card border border-brand-border text-slate-300'}">هەمووی</button>`;
+      
+      categories.forEach(cat => {
+        const isActive = activeCategory === cat.name;
+        html += `<button onclick="selectCategory('${cat.name}')" class="cat-pill px-3 py-1.5 rounded-xl whitespace-nowrap font-bold text-xs transition ${isActive ? 'bg-brand-500 text-white shadow' : 'bg-brand-card border border-brand-border text-slate-300'}">${cat.name}</button>`;
+      });
+      container.innerHTML = html;
+    }
+
+    function selectCategory(catName) {
+      activeCategory = catName;
+      activeSubcategory = 'all';
+      renderStorefront();
+    }
+
+    function renderSubcategoriesBar() {
+      const section = document.getElementById('subcategoriesSection');
+      const container = document.getElementById('subcategoriesList');
+
+      if (activeCategory === 'all') {
+        section.classList.add('hidden');
+        return;
+      }
+
+      const currentCat = categories.find(c => c.name === activeCategory);
+      if (!currentCat || !currentCat.subcategories || currentCat.subcategories.length === 0) {
+        section.classList.add('hidden');
+        return;
+      }
+
+      section.classList.remove('hidden');
+      let html = `<button onclick="selectSubcategory('all')" class="px-2.5 py-1 rounded-lg whitespace-nowrap font-semibold text-[11px] ${activeSubcategory === 'all' ? 'bg-sky-600 text-white' : 'bg-slate-800 text-slate-400 border border-brand-border'}">هەموو براندەکان</button>`;
+
+      currentCat.subcategories.forEach(sub => {
+        const isActive = activeSubcategory === sub;
+        html += `<button onclick="selectSubcategory('${sub}')" class="px-2.5 py-1 rounded-lg whitespace-nowrap font-semibold text-[11px] ${isActive ? 'bg-sky-600 text-white' : 'bg-slate-800 text-slate-400 border border-brand-border'}">${sub}</button>`;
+      });
+      container.innerHTML = html;
+    }
+
+    function selectSubcategory(subName) {
+      activeSubcategory = subName;
+      renderProductsGrid();
+      lucide.createIcons();
+    }
+
+    function handleSearch(q) {
+      searchQuery = q.toLowerCase().trim();
+      renderProductsGrid();
+    }
+
+    function handleSortChange(sortVal) {
+      currentSort = sortVal;
+      renderProductsGrid();
+    }
+
+    function getFilteredProducts() {
+      let list = products.filter(p => p.is_visible !== false);
+
+      if (activeCategory !== 'all') {
+        list = list.filter(p => p.category === activeCategory);
+      }
+      if (activeSubcategory !== 'all') {
+        list = list.filter(p => p.subcategory === activeSubcategory);
+      }
+      if (searchQuery) {
+        list = list.filter(p => p.name.toLowerCase().includes(searchQuery) || (p.subcategory && p.subcategory.toLowerCase().includes(searchQuery)));
+      }
+
+      // ڕیزبەندی
+      if (currentSort === 'newest') {
+        list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      } else if (currentSort === 'oldest') {
+        list.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+      } else if (currentSort === 'price_low') {
+        list.sort((a, b) => a.price_sale - b.price_sale);
+      } else if (currentSort === 'price_high') {
+        list.sort((a, b) => b.price_sale - a.price_sale);
+      }
+      return list;
+    }
+
+    function renderProductsGrid() {
+      const container = document.getElementById('productsGrid');
+      const list = getFilteredProducts();
+      document.getElementById('productCountBadge').innerText = `${list.length} کاڵا`;
+
+      if (list.length === 0) {
+        container.innerHTML = `<p class="col-span-2 text-center text-xs text-slate-500 py-10">هیچ کاڵایەک نەدۆزرایەوە</p>`;
+        return;
+      }
+
+      container.innerHTML = list.map(prod => `
+        <div class="bg-brand-card rounded-2xl border border-brand-border overflow-hidden p-2.5 flex flex-col justify-between space-y-2 hover:border-brand-500/30 transition shadow-sm">
+          <div onclick="openProductDetailModal('${prod.id}')" class="cursor-pointer space-y-1.5">
+            <div class="h-32 bg-slate-900 rounded-xl overflow-hidden border border-brand-border/60 flex items-center justify-center relative">
+              <img src="${prod.image_url || 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=400&q=80'}" class="w-full h-full object-contain">
+              ${prod.subcategory ? `<span class="absolute top-1.5 start-1.5 text-[9px] bg-slate-900/90 text-brand-400 font-bold px-1.5 py-0.5 rounded border border-brand-border/60">${prod.subcategory}</span>` : ''}
+              ${prod.stock <= 0 ? `<span class="absolute inset-0 bg-black/75 flex items-center justify-center text-rose-400 font-bold text-[11px]">لە مەخزەن نەماوە</span>` : ''}
+            </div>
+            <div>
+              <h3 class="font-bold text-xs text-white line-clamp-2 leading-snug">${prod.name}</h3>
+              <span class="text-[10px] text-slate-400 mt-0.5 block">${prod.stock > 0 ? (prod.stock <= 3 ? `<span class="text-amber-400">تەنها ${prod.stock} دانە ماوە</span>` : '🟢 بەردەستە') : '❌ تەواو بووە'}</span>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-1 border-t border-brand-border/60">
+            <span class="font-black text-xs text-emerald-400">${Number(prod.price_sale).toLocaleString()} <span class="text-[9px]">د.ع</span></span>
+            ${prod.stock > 0 ? `
+              <button onclick="addToCart('${prod.id}')" class="w-7 h-7 bg-brand-600 hover:bg-brand-500 active:scale-95 text-white rounded-lg flex items-center justify-center shadow">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+              </button>
+            ` : `<span class="text-[10px] text-slate-600 font-bold">بێ مەخزەن</span>`}
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    /* پەنجەرەی شیکردنەوەی کاڵا */
+    function openProductDetailModal(prodId) {
+      const prod = products.find(p => p.id === prodId);
+      if (!prod) return;
+      selectedModalProduct = prod;
+
+      document.getElementById('modalProductTitle').innerText = prod.name;
+      document.getElementById('modalProductBrand').innerText = prod.subcategory || prod.category;
+      document.getElementById('modalProductPrice').innerText = `${Number(prod.price_sale).toLocaleString()} دینار`;
+      document.getElementById('modalProductDesc').innerText = prod.description || 'مەوادی ئەسڵی و کوالێتی بەرز بۆ جوانکاری ئۆتۆمبێل.';
+      document.getElementById('modalProductImg').src = prod.image_url || 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=400&q=80';
+
+      document.getElementById('productDetailModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeProductDetailModal() {
+      document.getElementById('productDetailModal').classList.add('hidden');
+    }
+
+    function addProductFromModalToCart() {
+      if (selectedModalProduct) {
+        addToCart(selectedModalProduct.id);
+        closeProductDetailModal();
+      }
+    }
+
+    /* سەبەتەی کڕین (Cart System) */
+    function addToCart(prodId) {
+      const prod = products.find(p => p.id === prodId);
+      if (!prod || prod.stock <= 0) return;
+
+      const item = cart.find(c => c.id === prodId);
+      if (item) {
+        if (item.qty < prod.stock) item.qty++;
+        else alert('ئەمە کۆتا ژمارەیە لە مەخزەن!');
+      } else {
+        cart.push({ id: prod.id, name: prod.name, price: Number(prod.price_sale), cost: Number(prod.price_cost), qty: 1 });
+      }
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      const floatingBar = document.getElementById('floatingCartBar');
+      const badgeCount = document.getElementById('cartBadgeCount');
+      const totalPreview = document.getElementById('cartTotalPreview');
+
+      const totalItems = cart.reduce((sum, i) => sum + i.qty, 0);
+      const totalPrice = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+
+      if (totalItems > 0) {
+        floatingBar.classList.remove('hidden');
+        badgeCount.innerText = totalItems;
+        totalPreview.innerText = `${totalPrice.toLocaleString()} د.ع`;
+      } else {
+        floatingBar.classList.add('hidden');
+      }
+    }
+
+    function openCheckoutModal() {
+      if (cart.length === 0) return;
+
+      const citySelect = document.getElementById('order_city');
+      citySelect.innerHTML = deliveryRates.map(r => `<option value="${r.city}" data-rate="${r.rate}">${r.city}</option>`).join('');
+
+      renderCartItemsInModal();
+      calculateOrderDelivery();
+
+      document.getElementById('checkoutModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeCheckoutModal() {
+      document.getElementById('checkoutModal').classList.add('hidden');
+    }
+
+    function renderCartItemsInModal() {
+      const container = document.getElementById('cartItemsList');
+      container.innerHTML = cart.map(item => `
+        <div class="flex items-center justify-between py-1 border-b border-brand-border/40 text-[11px]">
+          <div>
+            <span class="font-bold text-white block">${item.name}</span>
+            <span class="text-slate-400 font-mono">${item.price.toLocaleString()} د.ع × ${item.qty}</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="changeCartQty('${item.id}', -1)" class="w-5 h-5 bg-slate-800 rounded flex items-center justify-center font-bold text-slate-300">-</button>
+            <span class="font-mono font-bold">${item.qty}</span>
+            <button onclick="changeCartQty('${item.id}', 1)" class="w-5 h-5 bg-slate-800 rounded flex items-center justify-center font-bold text-slate-300">+</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function changeCartQty(id, delta) {
+      const item = cart.find(c => c.id === id);
+      const prod = products.find(p => p.id === id);
+      if (item) {
+        item.qty += delta;
+        if (prod && item.qty > prod.stock) { item.qty = prod.stock; alert('مەخزەن بەشی ناکات!'); }
+        if (item.qty <= 0) cart = cart.filter(c => c.id !== id);
+      }
+      renderCartItemsInModal();
+      calculateOrderDelivery();
+      updateCartUI();
+      if (cart.length === 0) closeCheckoutModal();
+    }
+
+    function calculateOrderDelivery() {
+      const select = document.getElementById('order_city');
+      const selectedOption = select.options[select.selectedIndex];
+      const deliveryFee = selectedOption ? Number(selectedOption.getAttribute('data-rate')) : 0;
+
+      const subtotal = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+      const grandTotal = subtotal + deliveryFee;
+
+      document.getElementById('order_delivery_display').value = `${deliveryFee.toLocaleString()} د.ع`;
+      document.getElementById('orderSubtotalText').innerText = `${subtotal.toLocaleString()} د.ع`;
+      document.getElementById('orderDeliveryFeeText').innerText = `${deliveryFee.toLocaleString()} د.ع`;
+      document.getElementById('orderGrandTotalText').innerText = `${grandTotal.toLocaleString()} د.ع`;
+    }
+
+    /* ناردنی داواکاری لە ڕێگەی واتسئەپەوە و تۆمارکردن وەک Pending */
+    async function handleSendWhatsAppOrder(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('order_name').value;
+      const phone = document.getElementById('order_phone').value;
+      const city = document.getElementById('order_city').value;
+      const address = document.getElementById('order_address').value;
+
+      const select = document.getElementById('order_city');
+      const deliveryFee = Number(select.options[select.selectedIndex].getAttribute('data-rate')) || 0;
+      const subtotal = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+      const totalCost = cart.reduce((sum, i) => sum + ((i.cost || (i.price * 0.7)) * i.qty), 0);
+      const profit = subtotal - totalCost;
+      const grandTotal = subtotal + deliveryFee;
+
+      const orderId = 'ORD-' + Date.now();
+      const newOrder = {
+        id: orderId,
+        customer_name: name,
+        customer_phone: phone,
+        city: city,
+        address: address,
+        items: cart,
+        subtotal: subtotal,
+        delivery_fee: deliveryFee,
+        total: grandTotal,
+        profit: profit,
+        status: 'pending'
+      };
+
+      // پاشەکەوتکردن لە سێرڤەر وەک داواکاری چاوەڕوانکراو (Pending)
+      await dbClient.from('store_orders').insert(newOrder);
+
+      // دروستکردنی دەقی پسوڵەی واتسئەپ
+      let itemsText = cart.map(i => `• ${i.qty} دانە ${i.name} (${(i.price * i.qty).toLocaleString()} د.ع)`).join('\n');
+      const wpMessage = `*داواکاری نوێ لە فرۆشگای AWENA STORE* 🛒
+----------------------------------
+کڕیار: ${name}
+مۆبایل: ${phone}
+شار و ناونیشان: ${city} - ${address}
+----------------------------------
+کاڵاکان:
+${itemsText}
+----------------------------------
+کۆی کاڵاکان: ${subtotal.toLocaleString()} د.ع
+کرێی گەیاندن (${city}): ${deliveryFee.toLocaleString()} د.ع
+*کۆی گشتی بۆ وەرگرتن: ${grandTotal.toLocaleString()} د.ع*
+----------------------------------
+سوپاس بۆ متمانەتان بە AWENA DETAILING!`;
+
+      // کردنەوەی واتسئەپ
+      window.open(`https://api.whatsapp.com/send?phone=9647501234567&text=${encodeURIComponent(wpMessage)}`, '_blank');
+
+      cart = [];
+      updateCartUI();
+      closeCheckoutModal();
+      alert('داواکارییەکەت بە سەرکەوتوویی ئامادە کرا و ڕەوانەی واتسئەپ کرا!');
+      loadAllData();
+    }
+
+    /* ==========================================================
+       دیدگای بەڕێوەبەر (Admin Back-Office Logic)
+       ========================================================== */
+    function renderAdminDashboard() {
+      // حیساباتی دارایی تەنها بۆ داواکارییە پەسەندکراوەکان (Approved)
+      const approvedOrders = orders.filter(o => o.status === 'approved');
+      const totalRev = approvedOrders.reduce((sum, o) => sum + Number(o.subtotal), 0);
+      const totalProf = approvedOrders.reduce((sum, o) => sum + Number(o.profit), 0);
+      const totalCost = totalRev - totalProf;
+      const totalStock = products.reduce((sum, p) => sum + Number(p.stock || 0), 0);
+
+      document.getElementById('statRevenue').innerHTML = `${totalRev.toLocaleString()} <span class="text-[9px]">د.ع</span>`;
+      document.getElementById('statProfit').innerHTML = `${totalProf.toLocaleString()} <span class="text-[9px]">د.ع</span>`;
+      document.getElementById('statCost').innerHTML = `${totalCost.toLocaleString()} <span class="text-[9px]">د.ع</span>`;
+      document.getElementById('statStockTotal').innerText = `${totalStock} دانە`;
+
+      renderPendingOrders();
+      renderAdminDeliveryRates();
+      renderAdminProductsList();
+      lucide.createIcons();
+    }
+
+    function renderPendingOrders() {
+      const container = document.getElementById('pendingOrdersList');
+      const pending = orders.filter(o => o.status === 'pending');
+      document.getElementById('pendingOrdersCount').innerText = pending.length;
+
+      if (pending.length === 0) {
+        container.innerHTML = `<p class="text-center text-[11px] text-slate-500 py-2">هیچ داواکارییەکی چاوەڕوانکراو نییە</p>`;
+        return;
+      }
+
+      container.innerHTML = pending.map(order => `
+        <div class="bg-slate-900/80 p-2.5 rounded-xl border border-brand-border space-y-1.5 text-xs">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="font-extrabold text-white block">${order.customer_name} (${order.city})</span>
+              <span class="text-slate-400 font-mono text-[11px] dir-ltr block text-right">${order.customer_phone}</span>
+            </div>
+            <span class="font-black text-emerald-400 text-xs">${Number(order.total).toLocaleString()} د.ع</span>
+          </div>
+          <div class="text-[10px] text-slate-300">
+            ${(order.items || []).map(i => `${i.qty}× ${i.name}`).join(' ، ')}
+          </div>
+          <div class="flex items-center gap-2 pt-1 border-t border-brand-border/60">
+            <button onclick="approveOrder('${order.id}')" class="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-[11px] flex items-center justify-center gap-1 shadow">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i>
+              <span>پەسەندکردن (+قازانج)</span>
+            </button>
+            <button onclick="cancelOrder('${order.id}')" class="p-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg border border-rose-500/20 text-[11px]">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /* پەسەندکردنی ١-چرکە (قازانج زیاد دەکات و مەخزەن کەم دەکات) */
+    async function approveOrder(orderId) {
+      const order = orders.find(o => o.id === orderId);
+      if (!order) return;
+
+      // کەمکردنەوەی ژمارەی مەخزەن بۆ ئەو کاڵایانە
+      for (const item of (order.items || [])) {
+        const prod = products.find(p => p.id === item.id);
+        if (prod) {
+          const newStock = Math.max(0, prod.stock - item.qty);
+          await dbClient.from('store_products').update({ stock: newStock }).eq('id', prod.id);
+        }
+      }
+
+      await dbClient.from('store_orders').update({ status: 'approved' }).eq('id', orderId);
+      alert('داواکارییەکە پەسەندکرا، مەخزەن کەمکرا و قازانجەکە حیسابکرا!');
+      loadAllData();
+    }
+
+    async function cancelOrder(orderId) {
+      if (!confirm('ئایا دڵنیایت لە هەڵوەشاندنەوەی ئەم داواکارییە؟')) return;
+      await dbClient.from('store_orders').update({ status: 'cancelled' }).eq('id', orderId);
+      loadAllData();
+    }
+
+    /* ڕێکخستنی کرێی گەیاندنی شارەکان */
+    function renderAdminDeliveryRates() {
+      const container = document.getElementById('adminDeliveryRatesList');
+      container.innerHTML = deliveryRates.map(r => `
+        <div class="flex items-center justify-between bg-slate-900/60 p-1.5 rounded-lg border border-brand-border">
+          <span class="text-slate-300 font-medium">${r.city}</span>
+          <input type="number" id="del_rate_${r.city}" value="${r.rate}" class="w-20 bg-slate-800 text-brand-400 font-mono text-center p-1 rounded border border-brand-border text-xs focus:outline-none">
+        </div>
+      `).join('');
+    }
+
+    async function saveDeliveryRates() {
+      for (const r of deliveryRates) {
+        const input = document.getElementById(`del_rate_${r.city}`);
+        if (input) {
+          const newRate = Number(input.value) || 0;
+          await dbClient.from('store_delivery_rates').update({ rate: newRate }).eq('city', r.city);
+        }
+      }
+      alert('نرخەکانی گەیاندن نوێکرانەوە!');
+      loadAllData();
+    }
+
+    /* بەڕێوەبردنی بەشەکان و براندەکان (Category Manager) */
+    function openCategoryManagerModal() {
+      renderCategoryManagerModalList();
+      document.getElementById('categoryManagerModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeCategoryManagerModal() {
+      document.getElementById('categoryManagerModal').classList.add('hidden');
+    }
+
+    function renderCategoryManagerModalList() {
+      const container = document.getElementById('categoriesManagerList');
+      container.innerHTML = categories.map(cat => `
+        <div class="bg-slate-900/70 p-2.5 rounded-xl border border-brand-border space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-extrabold text-white text-xs">${cat.name}</span>
+            <button onclick="deleteCategory('${cat.id}')" class="text-rose-400 p-1 hover:bg-rose-500/10 rounded"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+          </div>
+          <div class="flex flex-wrap gap-1 text-[10px]">
+            ${(cat.subcategories || []).map((sub, sIdx) => `
+              <span class="bg-slate-800 text-brand-400 border border-brand-border px-2 py-0.5 rounded-full flex items-center gap-1">
+                ${sub} <button onclick="removeSubcategory('${cat.id}', ${sIdx})" class="text-slate-400 hover:text-white">×</button>
+              </span>
+            `).join('')}
+          </div>
+          <div class="flex gap-1.5 pt-1">
+            <input type="text" id="new_sub_${cat.id}" placeholder="براندی نوێ (وەک: ZviZZer)" class="flex-1 bg-slate-800 border border-brand-border rounded-lg p-1.5 text-[11px] text-white">
+            <button onclick="handleAddSubcategory('${cat.id}')" class="px-2 py-1 bg-sky-600 text-white font-bold rounded-lg text-[10px]">زیادکردن</button>
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    async function handleAddNewCategory() {
+      const name = document.getElementById('new_cat_name').value.trim();
+      if (!name) return;
+      await dbClient.from('store_categories').insert({ id: 'cat-' + Date.now(), name: name, subcategories: [] });
+      document.getElementById('new_cat_name').value = '';
+      await loadAllData();
+      renderCategoryManagerModalList();
+    }
+
+    async function handleAddSubcategory(catId) {
+      const input = document.getElementById(`new_sub_${catId}`);
+      const val = input.value.trim();
+      if (!val) return;
+      const cat = categories.find(c => c.id === catId);
+      if (cat) {
+        const subs = cat.subcategories || [];
+        subs.push(val);
+        await dbClient.from('store_categories').update({ subcategories: subs }).eq('id', catId);
+        input.value = '';
+        await loadAllData();
+        renderCategoryManagerModalList();
+      }
+    }
+
+    async function removeSubcategory(catId, index) {
+      const cat = categories.find(c => c.id === catId);
+      if (cat && cat.subcategories) {
+        cat.subcategories.splice(index, 1);
+        await dbClient.from('store_categories').update({ subcategories: cat.subcategories }).eq('id', catId);
+        await loadAllData();
+        renderCategoryManagerModalList();
+      }
+    }
+
+    async function deleteCategory(catId) {
+      if (!confirm('ئایا دڵنیایت لە سڕینەوەی ئەم بەشە؟')) return;
+      await dbClient.from('store_categories').delete().eq('id', catId);
+      await loadAllData();
+      renderCategoryManagerModalList();
+    }
+
+    /* زیادکردن و دەستکاریکردنی کاڵا لە مەخزەن */
+    function openNewProductModal() {
+      editingProductId = null;
+      document.getElementById('productModalTitle').innerText = 'زیادکردنی کاڵای نوێ';
+      document.getElementById('prod_name').value = '';
+      document.getElementById('prod_price_sale').value = '';
+      document.getElementById('prod_price_cost').value = '';
+      document.getElementById('prod_stock').value = '10';
+      document.getElementById('prod_desc').value = '';
+
+      populateCategoryDropdownForForm();
+      document.getElementById('productFormModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function populateCategoryDropdownForForm(selectedCat = null, selectedSub = null) {
+      const catSelect = document.getElementById('prod_category');
+      catSelect.innerHTML = categories.map(c => `<option value="${c.name}" ${selectedCat === c.name ? 'selected' : ''}>${c.name}</option>`).join('');
+      updateSubcatOptionsForForm(selectedSub);
+    }
+
+    function updateSubcatOptionsForForm(selectedSub = null) {
+      const catName = document.getElementById('prod_category').value;
+      const subSelect = document.getElementById('prod_subcategory');
+      const cat = categories.find(c => c.name === catName);
+
+      if (cat && cat.subcategories && cat.subcategories.length > 0) {
+        subSelect.innerHTML = `<option value="">(هیچ براندێک)</option>` + cat.subcategories.map(s => `<option value="${s}" ${selectedSub === s ? 'selected' : ''}>${s}</option>`).join('');
+      } else {
+        subSelect.innerHTML = `<option value="">(هیچ براندێک نییە)</option>`;
+      }
+    }
+
+    function closeProductFormModal() {
+      document.getElementById('productFormModal').classList.add('hidden');
+    }
+
+    async function handleProductFormSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('prodSubmitBtn');
+      btn.disabled = true;
+      btn.innerText = 'خەریکی پاشەکەوتکردنە...';
+
+      const fileInput = document.getElementById('prod_image_input');
+      let imageUrl = null;
+
+      if (fileInput.files && fileInput.files[0]) {
+        imageUrl = await compressImageToBase64(fileInput.files[0]);
+      }
+
+      const prodData = {
+        id: editingProductId || ('prod-' + Date.now()),
+        name: document.getElementById('prod_name').value,
+        category: document.getElementById('prod_category').value,
+        subcategory: document.getElementById('prod_subcategory').value || null,
+        price_sale: Number(document.getElementById('prod_price_sale').value),
+        price_cost: Number(document.getElementById('prod_price_cost').value),
+        stock: Number(document.getElementById('prod_stock').value),
+        description: document.getElementById('prod_desc').value
+      };
+
+      if (imageUrl) prodData.image_url = imageUrl;
+
+      await dbClient.from('store_products').upsert(prodData);
+
+      btn.disabled = false;
+      btn.innerText = 'پاشەکەوتکردن لە مەخزەن';
+      closeProductFormModal();
+      alert('کاڵاکە بە سەرکەوتوویی پاشەکەوت کرا!');
+      loadAllData();
+    }
+
+    function compressImageToBase64(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 500;
+            const scale = Math.min(1, MAX_WIDTH / img.width);
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', 0.65));
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderAdminProductsList() {
+      const container = document.getElementById('adminProductsList');
+      container.innerHTML = products.map(prod => `
+        <div class="bg-brand-card p-3 rounded-2xl border border-brand-border space-y-2 text-xs">
+          <div class="flex items-start justify-between">
+            <div class="flex items-center gap-2.5">
+              <img src="${prod.image_url || 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=400&q=80'}" class="w-12 h-12 rounded-xl object-contain bg-slate-900 border border-brand-border">
+              <div>
+                <h4 class="font-extrabold text-white text-xs">${prod.name}</h4>
+                <span class="text-[10px] text-slate-400">${prod.category} ${prod.subcategory ? `• <span class="text-brand-400 font-bold">${prod.subcategory}</span>` : ''}</span>
+              </div>
+            </div>
+            <button onclick="toggleProductVisibility('${prod.id}', ${!prod.is_visible})" class="p-1 rounded-lg text-xs ${prod.is_visible !== false ? 'text-emerald-400 bg-emerald-500/10' : 'text-slate-500 bg-slate-800'}">
+              <i data-lucide="${prod.is_visible !== false ? 'eye' : 'eye-off'}" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between bg-slate-900/60 p-2 rounded-xl border border-brand-border text-[11px]">
+            <div>
+              <span class="text-slate-400">فرۆش:</span> <span class="font-bold text-white">${Number(prod.price_sale).toLocaleString()}</span>
+              <span class="text-slate-400 ms-2">کڕین:</span> <span class="font-bold text-slate-400">${Number(prod.price_cost).toLocaleString()}</span>
+            </div>
+            <span class="text-emerald-400 font-bold">قازانج: +${(prod.price_sale - prod.price_cost).toLocaleString()} د.ع</span>
+          </div>
+
+          <div class="flex items-center justify-between pt-1">
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] text-slate-400">مەخزەن:</span>
+              <button onclick="quickUpdateStock('${prod.id}', -1)" class="w-6 h-6 bg-slate-800 rounded font-bold text-slate-300">-</button>
+              <span class="font-mono font-bold text-xs px-1 ${prod.stock <= 2 ? 'text-rose-400' : 'text-white'}">${prod.stock}</span>
+              <button onclick="quickUpdateStock('${prod.id}', 1)" class="w-6 h-6 bg-slate-800 rounded font-bold text-slate-300">+</button>
+            </div>
+            <div class="flex items-center gap-1">
+              <button onclick="openEditProductModal('${prod.id}')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded-lg"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
+              <button onclick="deleteProduct('${prod.id}')" class="p-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function quickUpdateStock(id, delta) {
+      const prod = products.find(p => p.id === id);
+      if (prod) {
+        const newStock = Math.max(0, prod.stock + delta);
+        await dbClient.from('store_products').update({ stock: newStock }).eq('id', id);
+        loadAllData();
+      }
+    }
+
+    async function toggleProductVisibility(id, newStatus) {
+      await dbClient.from('store_products').update({ is_visible: newStatus }).eq('id', id);
+      loadAllData();
+    }
+
+    function openEditProductModal(id) {
+      const prod = products.find(p => p.id === id);
+      if (!prod) return;
+
+      editingProductId = id;
+      document.getElementById('productModalTitle').innerText = 'دەستکاریکردنی کاڵا';
+      document.getElementById('prod_name').value = prod.name;
+      document.getElementById('prod_price_sale').value = prod.price_sale;
+      document.getElementById('prod_price_cost').value = prod.price_cost;
+      document.getElementById('prod_stock').value = prod.stock;
+      document.getElementById('prod_desc').value = prod.description || '';
+
+      populateCategoryDropdownForForm(prod.category, prod.subcategory);
+      document.getElementById('productFormModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm('ئایا دڵنیایت لە سڕینەوەی ئەم کاڵایە؟')) return;
+      await dbClient.from('store_products').delete().eq('id', id);
+      loadAllData();
+    }
+
+    /* لە کاتی کردنەوەی پەڕە */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadAllData();
+      updateSecurityUI();
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      }
+    });
+  </script>
+</body>
+</html>
