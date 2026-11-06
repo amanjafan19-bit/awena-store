@@ -6,7 +6,7 @@
   <title>AWENA STORE — فرۆشگای ئاوێنە دیتەیڵینگ</title>
   
   <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#0d1117">
+  <meta name="theme-color" content="#000000">
   <meta name="mobile-web-app-capable" content="yes">
   
   <script src="https://cdn.tailwindcss.com"></script>
@@ -23,9 +23,9 @@
               400: '#38bdf8',
               500: '#0ea5e9',
               600: '#0284c7',
-              dark: '#0d1117',
-              card: '#161b22',
-              border: '#30363d'
+              dark: '#000000',
+              card: '#11161d',
+              border: '#21262d'
             }
           }
         }
@@ -37,12 +37,13 @@
     body { font-family: 'Vazirmatn', sans-serif; -webkit-tap-highlight-color: transparent; }
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    #modalImageContainer { touch-action: none; }
   </style>
 </head>
-<body class="bg-brand-dark text-slate-100 min-h-screen pb-24 select-none">
+<body class="bg-black text-slate-100 min-h-screen pb-24 select-none">
 
   <!-- Header -->
-  <header class="sticky top-0 z-40 bg-brand-card/95 backdrop-blur border-b border-brand-border px-4 py-3 flex items-center justify-between">
+  <header class="sticky top-0 z-40 bg-black/95 backdrop-blur border-b border-brand-border px-4 py-3 flex items-center justify-between">
     <div class="flex items-center gap-2.5">
       <div onclick="handleSecretLogoClick()" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-sky-400 flex items-center justify-center shadow-lg shadow-sky-500/20 font-black text-xl text-white cursor-pointer active:scale-95 transition">
         A
@@ -54,7 +55,7 @@
     </div>
 
     <div class="flex items-center gap-1.5">
-      <button id="pwaInstallBtn" onclick="installPWA()" class="hidden px-2.5 py-1.5 text-[10px] font-bold rounded-xl bg-slate-800 border border-brand-border text-brand-400 flex items-center gap-1 shadow">
+      <button id="pwaInstallBtn" onclick="installPWA()" class="hidden px-2.5 py-1.5 text-[10px] font-bold rounded-xl bg-slate-900 border border-brand-border text-brand-400 flex items-center gap-1 shadow">
         <i data-lucide="download" class="w-3.5 h-3.5"></i>
         <span>دابەزاندن</span>
       </button>
@@ -76,7 +77,7 @@
        ========================================== -->
   <main id="storefrontView" class="max-w-md mx-auto p-4 space-y-4">
     
-    <div class="bg-gradient-to-b from-brand-card to-slate-900 p-3.5 rounded-2xl border border-brand-border text-center space-y-2 shadow-xl">
+    <div class="bg-gradient-to-b from-brand-card to-black p-3.5 rounded-2xl border border-brand-border text-center space-y-2 shadow-xl">
       <span class="text-[10px] bg-brand-500/20 text-brand-400 border border-brand-border px-2 py-0.5 rounded-full font-bold">فرۆشگای فەرمی ئاوێنە دیتەیڵینگ</span>
       <h2 class="text-sm font-black text-white">مەوادی ئەسڵی پۆڵیش، نانۆ و کارکێر</h2>
       
@@ -88,20 +89,24 @@
       </a>
     </div>
 
+    <!-- گەڕانی خێرا -->
     <div class="relative">
       <i data-lucide="search" class="w-4 h-4 absolute top-3.5 start-3 text-slate-400"></i>
       <input type="text" id="storeSearchInput" oninput="handleSearch(this.value)" placeholder="گەڕان بۆ مەواد، براند، شامپۆ، پاد..." 
              class="w-full bg-brand-card border border-brand-border rounded-xl py-2.5 ps-9 pe-4 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500">
     </div>
 
+    <!-- بەشە سەرەکییەکان -->
     <div class="space-y-1.5">
       <div id="mainCategoriesList" class="flex gap-1.5 overflow-x-auto pb-1 hide-scrollbar text-xs"></div>
     </div>
 
+    <!-- ژێر-بەشەکان و براندەکان -->
     <div id="subcategoriesSection" class="hidden space-y-1">
       <div id="subcategoriesList" class="flex gap-1.5 overflow-x-auto pb-1 hide-scrollbar text-[11px]"></div>
     </div>
 
+    <!-- ڕیزبەندی و ژمێرەر -->
     <div class="flex items-center justify-between text-xs px-1">
       <div class="flex items-center gap-1.5">
         <span class="text-slate-400">ڕیزبەندی:</span>
@@ -115,6 +120,7 @@
       <span class="text-[11px] text-brand-400 font-bold bg-brand-500/10 px-2 py-0.5 rounded-full border border-brand-border" id="productCountBadge">0 کاڵا</span>
     </div>
 
+    <!-- کاڵاکان بە دوو ستوون -->
     <div id="productsGrid" class="grid grid-cols-2 gap-2.5"></div>
   </main>
 
@@ -153,34 +159,34 @@
 
       <div class="space-y-2">
         <span class="text-slate-400 font-semibold block text-[11px]">کاڵا هەڵبژێردراوەکان:</span>
-        <div id="cartItemsList" class="space-y-1.5 max-h-36 overflow-y-auto p-2 bg-slate-900/60 rounded-xl border border-brand-border"></div>
+        <div id="cartItemsList" class="space-y-1.5 max-h-36 overflow-y-auto p-2 bg-black rounded-xl border border-brand-border"></div>
       </div>
 
       <form onsubmit="handleSendWhatsAppOrder(event)" class="space-y-2.5">
         <div>
           <label class="text-slate-300 block mb-1">ناوی سیانیت *</label>
-          <input type="text" id="order_name" required placeholder="سۆران ئەحمەد" class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-white focus:outline-none focus:border-brand-500">
+          <input type="text" id="order_name" required placeholder="سۆران ئەحمەد" class="w-full bg-black border border-brand-border rounded-xl p-2.5 text-white focus:outline-none focus:border-brand-500">
         </div>
         <div>
           <label class="text-slate-300 block mb-1">ژمارەی مۆبایل *</label>
-          <input type="tel" id="order_phone" required placeholder="0750 123 4567" class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-white dir-ltr text-right focus:outline-none focus:border-brand-500">
+          <input type="tel" id="order_phone" required placeholder="0750 123 4567" class="w-full bg-black border border-brand-border rounded-xl p-2.5 text-white dir-ltr text-right focus:outline-none focus:border-brand-500">
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="text-slate-300 block mb-1">شار *</label>
-            <select id="order_city" onchange="calculateOrderDelivery()" required class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-white focus:outline-none"></select>
+            <select id="order_city" onchange="calculateOrderDelivery()" required class="w-full bg-black border border-brand-border rounded-xl p-2.5 text-white focus:outline-none"></select>
           </div>
           <div>
             <label class="text-slate-300 block mb-1">کرێی گەیاندن</label>
-            <input type="text" id="order_delivery_display" readonly class="w-full bg-slate-900 border border-brand-border rounded-xl p-2.5 text-brand-400 font-bold">
+            <input type="text" id="order_delivery_display" readonly class="w-full bg-black border border-brand-border rounded-xl p-2.5 text-brand-400 font-bold">
           </div>
         </div>
         <div>
           <label class="text-slate-300 block mb-1">ناونیشانی تەواو (گەڕەک، شەقام، نزیکترین شوێن) *</label>
-          <input type="text" id="order_address" required placeholder="سلێمانی - گەڕەکی بەختیاری، بەرامبەر پارکی ئازادی" class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-white focus:outline-none">
+          <input type="text" id="order_address" required placeholder="سلێمانی - گەڕەکی بەختیاری، بەرامبەر پارکی ئازادی" class="w-full bg-black border border-brand-border rounded-xl p-2.5 text-white focus:outline-none">
         </div>
 
-        <div class="p-3 bg-slate-900/90 rounded-xl border border-brand-border space-y-1 text-xs">
+        <div class="p-3 bg-black rounded-xl border border-brand-border space-y-1 text-xs">
           <div class="flex justify-between text-slate-400"><span>کۆی کاڵاکان:</span><span id="orderSubtotalText">0 د.ع</span></div>
           <div class="flex justify-between text-slate-400"><span>کرێی گەیاندن:</span><span id="orderDeliveryFeeText">0 د.ع</span></div>
           <div class="flex justify-between text-emerald-400 font-black text-sm pt-1 border-t border-brand-border">
@@ -196,25 +202,39 @@
     </div>
   </div>
 
-  <!-- مۆداڵی وردەکاریی کاڵا -->
-  <div id="productDetailModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="bg-brand-card w-full max-w-md max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-brand-border shadow-2xl p-4 space-y-3.5 text-xs">
+  <!-- ==========================================
+       4. مۆداڵی وردەکاریی کاڵا (بە ڕەشی تەواو و زوومی دوو پەنجە)
+       ========================================== -->
+  <div id="productDetailModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-brand-card w-full max-w-md max-h-[92vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-brand-border shadow-2xl p-4 space-y-3 text-xs">
+      
       <div class="flex items-center justify-between border-b border-brand-border pb-2">
         <span class="text-[10px] text-brand-400 font-bold" id="modalProductBrand">براند</span>
         <button onclick="closeProductDetailModal()" class="text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
-      <div class="h-56 bg-slate-900 rounded-xl overflow-hidden border border-brand-border flex items-center justify-center">
-        <img id="modalProductImg" src="" class="w-full h-full object-contain">
+
+      <!-- شوێنی وێنە بە ڕەشی تەواوی قەترانی (#000000) بەبێ هیچ هێڵێک لە لایەکانەوە -->
+      <div class="space-y-1">
+        <div id="modalImageContainer" class="h-64 bg-black rounded-xl overflow-hidden border border-brand-border flex items-center justify-center relative cursor-grab">
+          <img id="modalProductImg" src="" class="w-full h-full object-contain pointer-events-none origin-center transition-transform duration-75">
+        </div>
+        <p class="text-[10px] text-center text-slate-500 flex items-center justify-center gap-1">
+          <i data-lucide="zoom-in" class="w-3 h-3 text-brand-400"></i>
+          <span>بە دوو پەنجە وێنەکە بهێنە پێشەوە، بە یەک پەنجە ئەملاولای پێبکە</span>
+        </p>
       </div>
+
       <div>
         <h3 class="font-extrabold text-base text-white" id="modalProductTitle">ناوی کاڵا</h3>
         <span class="text-emerald-400 font-black text-sm block mt-1" id="modalProductPrice">0 د.ع</span>
       </div>
-      <div class="p-3 bg-slate-900/70 rounded-xl border border-brand-border space-y-1">
+
+      <div class="p-3 bg-black rounded-xl border border-brand-border space-y-1">
         <span class="text-brand-400 font-semibold block text-[11px]">ڕێنمایی و چۆنیەتی بەکارهێنان:</span>
         <p class="text-slate-300 leading-relaxed text-[11px]" id="modalProductDesc"></p>
       </div>
-      <button onclick="addProductFromModalToCart()" class="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl shadow-lg shadow-sky-600/30 flex items-center justify-center gap-2">
+
+      <button onclick="addProductFromModalToCart()" class="w-full py-3.5 bg-brand-600 hover:bg-brand-500 active:scale-[0.99] text-white font-bold rounded-xl shadow-lg shadow-sky-600/30 flex items-center justify-center gap-2">
         <i data-lucide="shopping-cart" class="w-4 h-4"></i>
         <span>خستنە سەبەتەی کڕین</span>
       </button>
@@ -222,7 +242,7 @@
   </div>
 
   <!-- ==========================================
-       4. شاشەی بەڕێوەبەر (دابەشکراو بۆ ٣ بەش)
+       5. شاشەی بەڕێوەبەر (دابەشکراو بۆ ٣ بەش)
        ========================================== -->
   <main id="adminView" class="max-w-md mx-auto p-4 space-y-4 hidden pb-28">
 
@@ -233,7 +253,7 @@
           <i data-lucide="plus-circle" class="w-4 h-4"></i>
           <span>زیادکردنی کاڵا</span>
         </button>
-        <button onclick="openCategoryManagerModal()" class="py-3 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-brand-border flex items-center justify-center gap-1.5">
+        <button onclick="openCategoryManagerModal()" class="py-3 px-3 bg-slate-900 hover:bg-slate-800 text-slate-200 font-bold text-xs rounded-xl border border-brand-border flex items-center justify-center gap-1.5">
           <i data-lucide="folder-plus" class="w-4 h-4"></i>
           <span>بەش و براندەکان</span>
         </button>
@@ -242,7 +262,7 @@
       <div class="space-y-2">
         <div class="flex items-center justify-between px-1">
           <h3 class="text-xs font-bold text-slate-400">سەرجەم کاڵاکان لە مەخزەن</h3>
-          <span class="text-[10px] bg-slate-800 text-brand-400 border border-brand-border px-2 py-0.5 rounded-full font-mono" id="statStockTotal">0 دانە</span>
+          <span class="text-[10px] bg-black text-brand-400 border border-brand-border px-2 py-0.5 rounded-full font-mono" id="statStockTotal">0 دانە</span>
         </div>
         <div id="adminProductsList" class="space-y-2"></div>
       </div>
@@ -251,7 +271,6 @@
     <!-- بەشی ٢: قازانج و داهات و ئەرشیف (لای ڕاست) -->
     <section id="adminTabFinance" class="space-y-4 hidden">
       
-      <!-- کارتی ئامار و دوگمەی سفرکردنەوەی تێستەکان -->
       <div class="space-y-2">
         <div class="flex items-center justify-between px-1">
           <span class="text-[11px] text-slate-400 font-bold">داشبۆردی دارایی و ژمێریاری</span>
@@ -279,13 +298,11 @@
         </div>
       </div>
 
-      <!-- دوگمەی تۆمارکردنی فرۆشی ناو دوکان (کاش) -->
       <button onclick="openDirectSaleModal()" class="w-full py-2.5 px-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-emerald-700/20 flex items-center justify-center gap-1.5 transition">
         <i data-lucide="badge-plus" class="w-4 h-4"></i>
         <span>تۆمارکردنی فرۆشی ناو دوکان (کاش)</span>
       </button>
 
-      <!-- داواکارییە چاوەڕوانکراوەکان -->
       <div class="bg-brand-card p-3.5 rounded-2xl border border-brand-border space-y-2.5">
         <div class="flex items-center justify-between">
           <h3 class="font-bold text-xs text-white flex items-center gap-1.5">
@@ -297,7 +314,6 @@
         <div id="pendingOrdersList" class="space-y-2"></div>
       </div>
 
-      <!-- ڕاپۆرتی مەوادە فرۆشراوەکان بە دانە -->
       <div class="bg-brand-card p-3.5 rounded-2xl border border-brand-border space-y-2.5">
         <div class="flex items-center justify-between">
           <h3 class="font-bold text-xs text-white flex items-center gap-1.5">
@@ -309,7 +325,6 @@
         <div id="soldProductsReportList" class="space-y-1.5 max-h-48 overflow-y-auto"></div>
       </div>
 
-      <!-- ئەرشیفی کڕیاران -->
       <div class="bg-brand-card p-3.5 rounded-2xl border border-brand-border space-y-2.5">
         <div class="flex items-center justify-between">
           <h3 class="font-bold text-xs text-white flex items-center gap-1.5">
@@ -340,23 +355,20 @@
   </main>
 
   <!-- ==========================================
-       5. شریتی خوارەوەی بەڕێوەبەر (Bottom Navigation)
+       6. شریتی خوارەوەی بەڕێوەبەر (Bottom Navigation)
        ========================================== -->
-  <nav id="adminBottomNav" class="hidden fixed bottom-0 left-0 right-0 z-40 bg-brand-card/95 backdrop-blur border-t border-brand-border py-2 px-3">
+  <nav id="adminBottomNav" class="hidden fixed bottom-0 left-0 right-0 z-40 bg-black/95 backdrop-blur border-t border-brand-border py-2 px-3">
     <div class="max-w-md mx-auto grid grid-cols-3 gap-2">
-      <!-- لای ڕاست: قازانج و داهات و ئەرشیف -->
       <button onclick="switchAdminTab('finance')" id="adminNav-finance" class="admin-nav-btn py-1.5 px-2 rounded-xl flex flex-col items-center justify-center text-slate-400 transition text-[11px] font-semibold">
         <i data-lucide="pie-chart" class="w-5 h-5 mb-0.5"></i>
         <span>قازانج و ئەرشیف</span>
       </button>
 
-      <!-- ناوەڕاست: سەرەکی (کاڵاکان) -->
       <button onclick="switchAdminTab('products')" id="adminNav-products" class="admin-nav-btn py-1.5 px-2 rounded-xl flex flex-col items-center justify-center text-brand-400 font-extrabold transition text-[11px] bg-brand-500/10 border border-brand-500/20">
         <i data-lucide="package" class="w-5 h-5 mb-0.5"></i>
         <span>کاڵاکان (سەرەکی)</span>
       </button>
 
-      <!-- لای چەپ: کرێی گەیاندن -->
       <button onclick="switchAdminTab('delivery')" id="adminNav-delivery" class="admin-nav-btn py-1.5 px-2 rounded-xl flex flex-col items-center justify-center text-slate-400 transition text-[11px] font-semibold">
         <i data-lucide="truck" class="w-5 h-5 mb-0.5"></i>
         <span>کرێی گەیاندن</span>
@@ -365,7 +377,7 @@
   </nav>
 
   <!-- ==========================================
-       6. مۆداڵی فرۆشی ناو دوکان (کاش)
+       7. مۆداڵی فرۆشی ناو دوکان (کاش)
        ========================================== -->
   <div id="directSaleModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-brand-card w-full max-w-md rounded-t-2xl sm:rounded-2xl border border-brand-border shadow-2xl p-4 space-y-3.5 text-xs">
@@ -377,28 +389,28 @@
       <form onsubmit="handleDirectSaleSubmit(event)" class="space-y-3">
         <div>
           <label class="text-slate-300 block mb-1">کاڵای فرۆشراو *</label>
-          <select id="direct_prod_select" onchange="autoFillDirectSalePrice()" required class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-white focus:outline-none"></select>
+          <select id="direct_prod_select" onchange="autoFillDirectSalePrice()" required class="w-full bg-black border border-brand-border rounded-xl p-2.5 text-white focus:outline-none"></select>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="text-slate-300 block mb-1">ژمارەی دانە *</label>
-            <input type="number" id="direct_qty" value="1" min="1" required class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-white focus:outline-none">
+            <input type="number" id="direct_qty" value="1" min="1" required class="w-full bg-black border border-brand-border rounded-xl p-2.5 text-white focus:outline-none">
           </div>
           <div>
             <label class="text-emerald-400 font-bold block mb-1">نرخی فرۆشراو (کۆی گشتی) *</label>
-            <input type="number" id="direct_sale_price" required class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-emerald-400 font-black focus:outline-none">
+            <input type="number" id="direct_sale_price" required class="w-full bg-black border border-brand-border rounded-xl p-2.5 text-emerald-400 font-black focus:outline-none">
           </div>
         </div>
 
         <div>
-          <label class="text-slate-300 block mb-1">ناوی کڕیار (ئارەزوومەندانە بۆ ئەرشیف)</label>
-          <input type="text" id="direct_cust_name" placeholder="وەک: ئامانج / لە دوکان وەرگیرا" class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-white focus:outline-none">
+          <label class="text-slate-300 block mb-1">ناوی کڕیار (ئارەزوومەندانە)</label>
+          <input type="text" id="direct_cust_name" placeholder="وەک: لە دوکان وەرگیرا" class="w-full bg-black border border-brand-border rounded-xl p-2.5 text-white focus:outline-none">
         </div>
 
         <div>
-          <label class="text-slate-300 block mb-1">ژمارەی مۆبایلی کڕیار (ئارەزوومەندانە)</label>
-          <input type="tel" id="direct_cust_phone" placeholder="0750 123 4567" class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-white dir-ltr text-right focus:outline-none">
+          <label class="text-slate-300 block mb-1">ژمارەی مۆبایل (ئارەزوومەندانە)</label>
+          <input type="tel" id="direct_cust_phone" placeholder="0750 123 4567" class="w-full bg-black border border-brand-border rounded-xl p-2.5 text-white dir-ltr text-right focus:outline-none">
         </div>
 
         <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-700/30">
@@ -409,7 +421,7 @@
   </div>
 
   <!-- ==========================================
-       7. مۆداڵی داخڵکردنی کاڵای نوێ
+       8. مۆداڵی داخڵکردنی کاڵای نوێ
        ========================================== -->
   <div id="productFormModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-brand-card w-full max-w-md max-h-[92vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-brand-border shadow-2xl p-4 space-y-3.5 text-xs">
@@ -421,44 +433,44 @@
       <form onsubmit="handleProductFormSubmit(event)" class="space-y-3">
         <div>
           <label class="text-slate-300 block mb-1">ناوی کاڵا (لەگەڵ قەبارەکەی) *</label>
-          <input type="text" id="prod_name" required placeholder="وەک: ZviZZer Heavy Cut 250ml" class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-white focus:outline-none focus:border-brand-500">
+          <input type="text" id="prod_name" required placeholder="وەک: ZviZZer Heavy Cut 250ml" class="w-full bg-black border border-brand-border rounded-xl p-2.5 text-white focus:outline-none focus:border-brand-500">
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="text-slate-300 block mb-1">بەشی سەرەکی *</label>
-            <select id="prod_category" onchange="updateSubcatOptionsForForm()" required class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-white focus:outline-none"></select>
+            <select id="prod_category" onchange="updateSubcatOptionsForForm()" required class="w-full bg-black border border-brand-border rounded-xl p-2.5 text-white focus:outline-none"></select>
           </div>
           <div>
             <label class="text-slate-300 block mb-1">ژێر-بەش / براند</label>
-            <select id="prod_subcategory" class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-white focus:outline-none"></select>
+            <select id="prod_subcategory" class="w-full bg-black border border-brand-border rounded-xl p-2.5 text-white focus:outline-none"></select>
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-2 bg-slate-900/70 p-2.5 rounded-xl border border-brand-border">
+        <div class="grid grid-cols-2 gap-2 bg-black p-2.5 rounded-xl border border-brand-border">
           <div>
             <label class="text-emerald-400 font-bold block mb-1">نرخی فرۆشتن بە کڕیار *</label>
-            <input type="number" id="prod_price_sale" required placeholder="25000" class="w-full bg-slate-800 border border-brand-border rounded-xl p-2 text-emerald-400 font-black focus:outline-none">
+            <input type="number" id="prod_price_sale" required placeholder="25000" class="w-full bg-slate-900 border border-brand-border rounded-xl p-2 text-emerald-400 font-black focus:outline-none">
           </div>
           <div>
             <label class="text-amber-400 font-bold block mb-1">نرخی کڕین (جوملە) *</label>
-            <input type="number" id="prod_price_cost" required placeholder="18000" class="w-full bg-slate-800 border border-brand-border rounded-xl p-2 text-amber-400 font-black focus:outline-none">
+            <input type="number" id="prod_price_cost" required placeholder="18000" class="w-full bg-slate-900 border border-brand-border rounded-xl p-2 text-amber-400 font-black focus:outline-none">
           </div>
         </div>
 
         <div>
           <label class="text-slate-300 block mb-1">ژمارەی بەردەست لە مەخزەن *</label>
-          <input type="number" id="prod_stock" required value="10" class="w-full bg-slate-800 border border-brand-border rounded-xl p-2.5 text-white focus:outline-none">
+          <input type="number" id="prod_stock" required value="10" class="w-full bg-black border border-brand-border rounded-xl p-2.5 text-white focus:outline-none">
         </div>
 
         <div>
           <label class="text-slate-300 block mb-1">ڕێنمایی و چۆنیەتی بەکارهێنان بە کوردی</label>
-          <textarea id="prod_desc" rows="2" placeholder="بۆ سڕینەوەی کڕانی قووڵ بەکاردێت بە پادی پۆڵیشی زڤایزەر..." class="w-full bg-slate-800 border border-brand-border rounded-xl p-2 text-white focus:outline-none"></textarea>
+          <textarea id="prod_desc" rows="2" placeholder="بۆ سڕینەوەی کڕانی قووڵ بەکاردێت بە پادی پۆڵیشی زڤایزەر..." class="w-full bg-black border border-brand-border rounded-xl p-2 text-white focus:outline-none"></textarea>
         </div>
 
         <div>
           <label class="text-slate-300 block mb-1">وێنەی کاڵا (لە گەلەری یان کامێرا)</label>
-          <input type="file" id="prod_image_input" accept="image/*" class="w-full bg-slate-800 border border-brand-border rounded-xl p-2 text-slate-400 text-xs">
+          <input type="file" id="prod_image_input" accept="image/*" class="w-full bg-black border border-brand-border rounded-xl p-2 text-slate-400 text-xs">
         </div>
 
         <button type="submit" id="prodSubmitBtn" class="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl shadow-lg shadow-sky-600/30">
@@ -469,7 +481,7 @@
   </div>
 
   <!-- ==========================================
-       8. مۆداڵی بەڕێوەبەری بەش و براندەکان
+       9. مۆداڵی بەڕێوەبەری بەش و براندەکان
        ========================================== -->
   <div id="categoryManagerModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-brand-card w-full max-w-md max-h-[92vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-brand-border shadow-2xl p-4 space-y-3.5 text-xs">
@@ -478,10 +490,10 @@
         <button onclick="closeCategoryManagerModal()" class="text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
-      <div class="space-y-1.5 bg-slate-900/60 p-2.5 rounded-xl border border-brand-border">
+      <div class="space-y-1.5 bg-black p-2.5 rounded-xl border border-brand-border">
         <span class="text-slate-300 font-bold block">زیادکردنی بەشی سەرەکی نوێ:</span>
         <div class="flex gap-2">
-          <input type="text" id="new_cat_name" placeholder="وەک: پۆڵیش و نانۆ" class="flex-1 bg-slate-800 border border-brand-border rounded-xl p-2 text-white">
+          <input type="text" id="new_cat_name" placeholder="وەک: پۆڵیش و نانۆ" class="flex-1 bg-slate-900 border border-brand-border rounded-xl p-2 text-white">
           <button onclick="handleAddNewCategory()" class="py-2 px-3 bg-brand-600 text-white font-bold rounded-xl">زیادکردن</button>
         </div>
       </div>
@@ -491,7 +503,7 @@
   </div>
 
   <!-- ==========================================
-       9. کۆدی بەستنەوە و کارپێکردن
+       10. کۆدی بەستنەوە، زوومی دوو پەنجە و کارپێکردن
        ========================================== -->
   <script>
     const SUPABASE_URL = 'https://yryszfvdokaplaweqatj.supabase.co';
@@ -519,6 +531,17 @@
     let secretLogoClicks = 0;
     let secretLogoTimer = null;
     let deferredPrompt = null;
+
+    // زوومی پێشکەوتوو بە دوو پەنجە و ڕاکێشان بۆ وێنەی بەرهەم
+    let modalZoomScale = 1;
+    let modalPanX = 0;
+    let modalPanY = 0;
+    let initialPinchDist = 0;
+    let initialScale = 1;
+    let isTouchingModalImg = false;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let lastTapModalTime = 0;
 
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
@@ -723,11 +746,11 @@
       }
 
       section.classList.remove('hidden');
-      let html = `<button onclick="selectSubcategory('all')" class="px-2.5 py-1 rounded-lg whitespace-nowrap font-semibold text-[11px] ${activeSubcategory === 'all' ? 'bg-sky-600 text-white' : 'bg-slate-800 text-slate-400 border border-brand-border'}">هەموو براندەکان</button>`;
+      let html = `<button onclick="selectSubcategory('all')" class="px-2.5 py-1 rounded-lg whitespace-nowrap font-semibold text-[11px] ${activeSubcategory === 'all' ? 'bg-sky-600 text-white' : 'bg-slate-900 text-slate-400 border border-brand-border'}">هەموو براندەکان</button>`;
 
       currentCat.subcategories.forEach(sub => {
         const isActive = activeSubcategory === sub;
-        html += `<button onclick="selectSubcategory('${sub}')" class="px-2.5 py-1 rounded-lg whitespace-nowrap font-semibold text-[11px] ${isActive ? 'bg-sky-600 text-white' : 'bg-slate-800 text-slate-400 border border-brand-border'}">${sub}</button>`;
+        html += `<button onclick="selectSubcategory('${sub}')" class="px-2.5 py-1 rounded-lg whitespace-nowrap font-semibold text-[11px] ${isActive ? 'bg-sky-600 text-white' : 'bg-slate-900 text-slate-400 border border-brand-border'}">${sub}</button>`;
       });
       container.innerHTML = html;
     }
@@ -784,12 +807,13 @@
       }
 
       container.innerHTML = list.map(prod => `
-        <div class="bg-brand-card rounded-2xl border border-brand-border overflow-hidden p-2.5 flex flex-col justify-between space-y-2 hover:border-brand-500/30 transition shadow-sm">
+        <div class="bg-brand-card rounded-2xl border border-brand-border overflow-hidden p-2.5 flex flex-col justify-between space-y-2 hover:border-brand-500/40 transition shadow-sm">
           <div onclick="openProductDetailModal('${prod.id}')" class="cursor-pointer space-y-1.5">
-            <div class="h-32 bg-slate-900 rounded-xl overflow-hidden border border-brand-border/60 flex items-center justify-center relative">
+            <!-- پشتی وێنەکە بە ڕەشی قەترانی تەواو (#000000) دانراوە تا لەگەڵ وێنەکە ببێتە یەک پارچە -->
+            <div class="h-36 bg-black rounded-xl overflow-hidden border border-brand-border/80 flex items-center justify-center relative">
               <img src="${prod.image_url || 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=400&q=80'}" class="w-full h-full object-contain">
-              ${prod.subcategory ? `<span class="absolute top-1.5 start-1.5 text-[9px] bg-slate-900/90 text-brand-400 font-bold px-1.5 py-0.5 rounded border border-brand-border/60">${prod.subcategory}</span>` : ''}
-              ${prod.stock <= 0 ? `<span class="absolute inset-0 bg-black/75 flex items-center justify-center text-rose-400 font-bold text-[11px]">لە مەخزەن نەماوە</span>` : ''}
+              ${prod.subcategory ? `<span class="absolute top-1.5 start-1.5 text-[9px] bg-black/90 text-brand-400 font-bold px-1.5 py-0.5 rounded border border-brand-border">${prod.subcategory}</span>` : ''}
+              ${prod.stock <= 0 ? `<span class="absolute inset-0 bg-black/85 flex items-center justify-center text-rose-400 font-bold text-[11px]">لە مەخزەن نەماوە</span>` : ''}
             </div>
             <div>
               <h3 class="font-bold text-xs text-white line-clamp-2 leading-snug">${prod.name}</h3>
@@ -810,6 +834,7 @@
       lucide.createIcons();
     }
 
+    /* پەنجەرەی شیکردنەوەی کاڵا + زوومی دوو پەنجە */
     function openProductDetailModal(prodId) {
       const prod = products.find(p => p.id === prodId);
       if (!prod) return;
@@ -819,7 +844,10 @@
       document.getElementById('modalProductBrand').innerText = prod.subcategory || prod.category;
       document.getElementById('modalProductPrice').innerText = `${Number(prod.price_sale).toLocaleString()} دینار`;
       document.getElementById('modalProductDesc').innerText = prod.description || 'مەوادی ئەسڵی و کوالێتی بەرز بۆ جوانکاری ئۆتۆمبێل.';
-      document.getElementById('modalProductImg').src = prod.image_url || 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=400&q=80';
+      
+      const imgEl = document.getElementById('modalProductImg');
+      imgEl.src = prod.image_url || 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=400&q=80';
+      resetModalZoom();
 
       document.getElementById('productDetailModal').classList.remove('hidden');
       lucide.createIcons();
@@ -827,6 +855,7 @@
 
     function closeProductDetailModal() {
       document.getElementById('productDetailModal').classList.add('hidden');
+      resetModalZoom();
     }
 
     function addProductFromModalToCart() {
@@ -836,6 +865,80 @@
       }
     }
 
+    /* سیستەمی زووم و ڕاکێشان بە پەنجە لەسەر وێنەی کاڵا */
+    function resetModalZoom() {
+      modalZoomScale = 1;
+      modalPanX = 0;
+      modalPanY = 0;
+      applyModalImageTransform();
+    }
+
+    function applyModalImageTransform() {
+      const img = document.getElementById('modalProductImg');
+      if (img) {
+        img.style.transform = `translate(${modalPanX}px, ${modalPanY}px) scale(${modalZoomScale})`;
+      }
+    }
+
+    function initModalTouchZoom() {
+      const vp = document.getElementById('modalImageContainer');
+      if (!vp) return;
+
+      vp.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 2) {
+          isTouchingModalImg = false;
+          initialPinchDist = Math.hypot(
+            e.touches[0].pageX - e.touches[1].pageX,
+            e.touches[0].pageY - e.touches[1].pageY
+          );
+          initialScale = modalZoomScale;
+        } else if (e.touches.length === 1) {
+          isTouchingModalImg = true;
+          touchStartX = e.touches[0].pageX - modalPanX;
+          touchStartY = e.touches[0].pageY - modalPanY;
+
+          const now = new Date().getTime();
+          if (now - lastTapModalTime < 300) {
+            if (modalZoomScale > 1) {
+              resetModalZoom();
+            } else {
+              modalZoomScale = 2.5;
+              applyModalImageTransform();
+            }
+          }
+          lastTapModalTime = now;
+        }
+      }, { passive: false });
+
+      vp.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          const dist = Math.hypot(
+            e.touches[0].pageX - e.touches[1].pageX,
+            e.touches[0].pageY - e.touches[1].pageY
+          );
+          if (initialPinchDist > 0) {
+            modalZoomScale = Math.min(Math.max(1, initialScale * (dist / initialPinchDist)), 4.5);
+            applyModalImageTransform();
+          }
+        } else if (e.touches.length === 1 && isTouchingModalImg && modalZoomScale > 1) {
+          e.preventDefault();
+          modalPanX = e.touches[0].pageX - touchStartX;
+          modalPanY = e.touches[0].pageY - touchStartY;
+          applyModalImageTransform();
+        }
+      }, { passive: false });
+
+      vp.addEventListener('touchend', (e) => {
+        if (e.touches.length < 2) initialPinchDist = 0;
+        if (e.touches.length === 0) {
+          isTouchingModalImg = false;
+          if (modalZoomScale <= 1) resetModalZoom();
+        }
+      });
+    }
+
+    /* سەبەتەی کڕین (Cart System) */
     function addToCart(prodId) {
       const prod = products.find(p => p.id === prodId);
       if (!prod || prod.stock <= 0) return;
@@ -893,9 +996,9 @@
             <span class="text-slate-400 font-mono">${item.price.toLocaleString()} د.ع × ${item.qty}</span>
           </div>
           <div class="flex items-center gap-1.5">
-            <button onclick="changeCartQty('${item.id}', -1)" class="w-5 h-5 bg-slate-800 rounded flex items-center justify-center font-bold text-slate-300">-</button>
+            <button onclick="changeCartQty('${item.id}', -1)" class="w-5 h-5 bg-slate-900 rounded flex items-center justify-center font-bold text-slate-300">-</button>
             <span class="font-mono font-bold">${item.qty}</span>
-            <button onclick="changeCartQty('${item.id}', 1)" class="w-5 h-5 bg-slate-800 rounded flex items-center justify-center font-bold text-slate-300">+</button>
+            <button onclick="changeCartQty('${item.id}', 1)" class="w-5 h-5 bg-slate-900 rounded flex items-center justify-center font-bold text-slate-300">+</button>
           </div>
         </div>
       `).join('');
@@ -1020,7 +1123,7 @@ ${itemsText}
       }
 
       container.innerHTML = pending.map(order => `
-        <div class="bg-slate-900/80 p-2.5 rounded-xl border border-brand-border space-y-1.5 text-xs">
+        <div class="bg-black p-2.5 rounded-xl border border-brand-border space-y-1.5 text-xs">
           <div class="flex items-start justify-between">
             <div>
               <span class="font-extrabold text-white block">${order.customer_name} (${order.city})</span>
@@ -1067,7 +1170,6 @@ ${itemsText}
       loadAllData();
     }
 
-    /* ڕاپۆرتی مەوادە فرۆشراوەکان بە دانە */
     function renderSoldProductsReport() {
       const container = document.getElementById('soldProductsReportList');
       const approvedOrders = orders.filter(o => o.status === 'approved');
@@ -1110,20 +1212,19 @@ ${itemsText}
       salesList.sort((a, b) => b.qty - a.qty);
 
       container.innerHTML = salesList.map(item => `
-        <div class="bg-slate-900/60 p-2 rounded-xl border border-brand-border/60 flex items-center justify-between text-xs">
+        <div class="bg-black p-2 rounded-xl border border-brand-border/60 flex items-center justify-between text-xs">
           <div>
             <span class="font-bold text-white block">${item.name}</span>
             <span class="text-[10px] text-slate-400 font-mono">داهات: ${item.revenue.toLocaleString()} د.ع</span>
           </div>
           <div class="text-end">
-            <span class="bg-brand-500/10 text-brand-400 border border-brand-500/20 px-2 py-0.5 rounded-full font-mono font-bold text-[11px]">${item.qty} دانە</span>
+            <span class="bg-brand-500/10 text-brand-400 border border-brand-border px-2 py-0.5 rounded-full font-mono font-bold text-[11px]">${item.qty} دانە</span>
             <span class="text-[10px] text-emerald-400 font-bold block mt-0.5">+${item.profit.toLocaleString()} د.ع قازانج</span>
           </div>
         </div>
       `).join('');
     }
 
-    /* ئەرشیفی کڕیاران */
     function renderCustomerArchive() {
       const container = document.getElementById('customerArchiveList');
       const approvedOrders = orders.filter(o => o.status === 'approved');
@@ -1157,7 +1258,7 @@ ${itemsText}
       customerList.sort((a, b) => b.totalSpent - a.totalSpent);
 
       container.innerHTML = customerList.map(cust => `
-        <div class="bg-slate-900/60 p-2.5 rounded-xl border border-brand-border space-y-1.5 text-xs">
+        <div class="bg-black p-2.5 rounded-xl border border-brand-border space-y-1.5 text-xs">
           <div class="flex items-start justify-between">
             <div>
               <span class="font-extrabold text-white block">${cust.name}</span>
@@ -1176,7 +1277,6 @@ ${itemsText}
       `).join('');
     }
 
-    /* سفرکردنەوەی داتاکانی تێست */
     async function resetTestDataPrompt() {
       const pin = prompt('تکایە بۆ سفرکردنەوەی هەموو تێستەکان، ڕەمزی نهێنی بنووسە:');
       if (pin === ADMIN_PIN) {
@@ -1190,7 +1290,6 @@ ${itemsText}
       }
     }
 
-    /* فرۆشی ناو دوکان (کاش) */
     function openDirectSaleModal() {
       const select = document.getElementById('direct_prod_select');
       const inStock = products.filter(p => p.stock > 0);
@@ -1249,10 +1348,9 @@ ${itemsText}
         delivery_fee: 0,
         total: salePrice,
         profit: profit,
-        status: 'approved' // یەکسەر پەسەند دەکرێت
+        status: 'approved'
       };
 
-      // پاشەکەوتکردن لە سێرڤەر و کەمکردنی مەخزەن
       await dbClient.from('store_orders').insert(directOrder);
       await dbClient.from('store_products').update({ stock: prod.stock - qty }).eq('id', prod.id);
 
@@ -1264,9 +1362,9 @@ ${itemsText}
     function renderAdminDeliveryRates() {
       const container = document.getElementById('adminDeliveryRatesList');
       container.innerHTML = deliveryRates.map(r => `
-        <div class="flex items-center justify-between bg-slate-900/60 p-1.5 rounded-lg border border-brand-border">
+        <div class="flex items-center justify-between bg-black p-1.5 rounded-lg border border-brand-border">
           <span class="text-slate-300 font-medium">${r.city}</span>
-          <input type="number" id="del_rate_${r.city}" value="${r.rate}" class="w-20 bg-slate-800 text-brand-400 font-mono text-center p-1 rounded border border-brand-border text-xs focus:outline-none">
+          <input type="number" id="del_rate_${r.city}" value="${r.rate}" class="w-20 bg-slate-900 text-brand-400 font-mono text-center p-1 rounded border border-brand-border text-xs focus:outline-none">
         </div>
       `).join('');
     }
@@ -1296,20 +1394,20 @@ ${itemsText}
     function renderCategoryManagerModalList() {
       const container = document.getElementById('categoriesManagerList');
       container.innerHTML = categories.map(cat => `
-        <div class="bg-slate-900/70 p-2.5 rounded-xl border border-brand-border space-y-2">
+        <div class="bg-black p-2.5 rounded-xl border border-brand-border space-y-2">
           <div class="flex items-center justify-between">
             <span class="font-extrabold text-white text-xs">${cat.name}</span>
             <button onclick="deleteCategory('${cat.id}')" class="text-rose-400 p-1 hover:bg-rose-500/10 rounded"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
           </div>
           <div class="flex flex-wrap gap-1 text-[10px]">
             ${(cat.subcategories || []).map((sub, sIdx) => `
-              <span class="bg-slate-800 text-brand-400 border border-brand-border px-2 py-0.5 rounded-full flex items-center gap-1">
+              <span class="bg-slate-900 text-brand-400 border border-brand-border px-2 py-0.5 rounded-full flex items-center gap-1">
                 ${sub} <button onclick="removeSubcategory('${cat.id}', ${sIdx})" class="text-slate-400 hover:text-white">×</button>
               </span>
             `).join('')}
           </div>
           <div class="flex gap-1.5 pt-1">
-            <input type="text" id="new_sub_${cat.id}" placeholder="براندی نوێ (وەک: ZviZZer)" class="flex-1 bg-slate-800 border border-brand-border rounded-lg p-1.5 text-[11px] text-white">
+            <input type="text" id="new_sub_${cat.id}" placeholder="براندی نوێ (وەک: ZviZZer)" class="flex-1 bg-slate-900 border border-brand-border rounded-lg p-1.5 text-[11px] text-white">
             <button onclick="handleAddSubcategory('${cat.id}')" class="px-2 py-1 bg-sky-600 text-white font-bold rounded-lg text-[10px]">زیادکردن</button>
           </div>
         </div>
@@ -1456,18 +1554,18 @@ ${itemsText}
         <div class="bg-brand-card p-3 rounded-2xl border border-brand-border space-y-2 text-xs">
           <div class="flex items-start justify-between">
             <div class="flex items-center gap-2.5">
-              <img src="${prod.image_url || 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=400&q=80'}" class="w-12 h-12 rounded-xl object-contain bg-slate-900 border border-brand-border">
+              <img src="${prod.image_url || 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=400&q=80'}" class="w-12 h-12 rounded-xl object-contain bg-black border border-brand-border">
               <div>
                 <h4 class="font-extrabold text-white text-xs">${prod.name}</h4>
                 <span class="text-[10px] text-slate-400">${prod.category} ${prod.subcategory ? `• <span class="text-brand-400 font-bold">${prod.subcategory}</span>` : ''}</span>
               </div>
             </div>
-            <button onclick="toggleProductVisibility('${prod.id}', ${!prod.is_visible})" class="p-1 rounded-lg text-xs ${prod.is_visible !== false ? 'text-emerald-400 bg-emerald-500/10' : 'text-slate-500 bg-slate-800'}">
+            <button onclick="toggleProductVisibility('${prod.id}', ${!prod.is_visible})" class="p-1 rounded-lg text-xs ${prod.is_visible !== false ? 'text-emerald-400 bg-emerald-500/10' : 'text-slate-500 bg-black'}">
               <i data-lucide="${prod.is_visible !== false ? 'eye' : 'eye-off'}" class="w-4 h-4"></i>
             </button>
           </div>
 
-          <div class="flex items-center justify-between bg-slate-900/60 p-2 rounded-xl border border-brand-border text-[11px]">
+          <div class="flex items-center justify-between bg-black p-2 rounded-xl border border-brand-border text-[11px]">
             <div>
               <span class="text-slate-400">فرۆش:</span> <span class="font-bold text-white">${Number(prod.price_sale).toLocaleString()}</span>
               <span class="text-slate-400 ms-2">کڕین:</span> <span class="font-bold text-slate-400">${Number(prod.price_cost).toLocaleString()}</span>
@@ -1478,13 +1576,13 @@ ${itemsText}
           <div class="flex items-center justify-between pt-1">
             <div class="flex items-center gap-1.5">
               <span class="text-[11px] text-slate-400">مەخزەن:</span>
-              <button onclick="quickUpdateStock('${prod.id}', -1)" class="w-6 h-6 bg-slate-800 rounded font-bold text-slate-300">-</button>
+              <button onclick="quickUpdateStock('${prod.id}', -1)" class="w-6 h-6 bg-slate-900 rounded font-bold text-slate-300">-</button>
               <span class="font-mono font-bold text-xs px-1 ${prod.stock <= 2 ? 'text-rose-400' : 'text-white'}">${prod.stock}</span>
-              <button onclick="quickUpdateStock('${prod.id}', 1)" class="w-6 h-6 bg-slate-800 rounded font-bold text-slate-300">+</button>
+              <button onclick="quickUpdateStock('${prod.id}', 1)" class="w-6 h-6 bg-slate-900 rounded font-bold text-slate-300">+</button>
             </div>
             <div class="flex items-center gap-1">
-              <button onclick="openEditProductModal('${prod.id}')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded-lg"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
-              <button onclick="deleteProduct('${prod.id}')" class="p-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+              <button onclick="openEditProductModal('${prod.id}')" class="p-1.5 bg-slate-900 hover:bg-slate-800 text-amber-400 rounded-lg"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
+              <button onclick="deleteProduct('${prod.id}')" class="p-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg border border-rose-500/20"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
             </div>
           </div>
         </div>
@@ -1531,6 +1629,7 @@ ${itemsText}
     window.addEventListener('DOMContentLoaded', () => {
       loadAllData();
       updateSecurityUI();
+      initModalTouchZoom();
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js').catch(() => {});
       }
