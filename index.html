@@ -220,10 +220,10 @@
   </div>
 
   <!-- ==========================================
-       4. مۆداڵی وردەکاریی کاڵا (بەرزکراوە بۆ سەرەوە + بێ نووسینی زووم)
+       4. مۆداڵی وردەکاریی کاڵا (ڕێک لە ناوەڕاست و سەرەوە، بێ نووسینی زووم)
        ========================================== -->
-  <div id="productDetailModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm hidden flex items-start sm:items-center justify-center p-2 sm:p-4 pt-4 sm:pt-4">
-    <div class="bg-brand-card w-full max-w-md max-h-[94vh] overflow-y-auto rounded-2xl border border-brand-border shadow-2xl p-3.5 space-y-2.5 text-xs">
+  <div id="productDetailModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-brand-card w-full max-w-md max-h-[92vh] overflow-y-auto rounded-2xl border border-brand-border shadow-2xl p-3.5 space-y-2.5 text-xs">
       
       <!-- سەرپەڕە -->
       <div class="flex items-center justify-between border-b border-brand-border pb-1.5">
@@ -231,12 +231,12 @@
         <button onclick="closeProductDetailModal()" class="text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
-      <!-- وێنەی بەرهەم (بەرزکراوەتەوە بۆ سەرەوە بە تەواوی ڕەش) -->
+      <!-- وێنەی بەرهەم بە تەواوی ڕەش (#000000) بەبێ نووسینی زووم لە ژێریدا -->
       <div id="modalImageContainer" class="h-64 sm:h-72 bg-black rounded-xl overflow-hidden border border-brand-border flex items-center justify-center relative cursor-grab">
         <img id="modalProductImg" src="" class="w-full h-full object-contain pointer-events-none origin-center transition-transform duration-75">
       </div>
 
-      <!-- ناونیشان و نرخ لە ژێر وێنەکە دەستبەجێ -->
+      <!-- ناونیشان و نرخ لە ژێر وێنەکە -->
       <div class="pt-0.5">
         <h3 class="font-extrabold text-base text-white leading-tight" id="modalProductTitle">ناوی کاڵا</h3>
         <span class="text-emerald-400 font-black text-sm block mt-1" id="modalProductPrice">0 د.ع</span>
@@ -838,23 +838,23 @@
               </div>
             </div>
 
-            <!-- بەشی نرخ و دوگمەی زیاد/کەمکردن لەسەر کارتەکە -->
+            <!-- دوگمەی زیاد و کەم لەسەر کارتەکە -->
             <div class="flex items-center justify-between pt-1 border-t border-brand-border/60">
               <span class="font-black text-xs text-emerald-400">${Number(prod.price_sale).toLocaleString()} <span class="text-[9px]">د.ع</span></span>
               
               ${prod.stock > 0 ? (
                 inCartQty > 0 ? `
-                  <div class="flex items-center gap-1 bg-black/80 border border-brand-500/40 rounded-xl p-0.5 shadow">
-                    <button onclick="changeCartQty('${prod.id}', 1)" class="w-6 h-6 bg-brand-600 hover:bg-brand-500 active:scale-95 text-white rounded-lg flex items-center justify-center font-bold text-xs">
+                  <div class="flex items-center bg-black border border-brand-500/40 rounded-xl p-0.5 shadow">
+                    <button type="button" onclick="event.stopPropagation(); changeCartQty('${prod.id}', 1)" class="w-6 h-6 bg-brand-600 hover:bg-brand-500 active:scale-90 text-white rounded-lg flex items-center justify-center font-black text-xs">
                       +
                     </button>
-                    <span class="font-mono font-black text-xs text-amber-400 px-1.5">${inCartQty}</span>
-                    <button onclick="changeCartQty('${prod.id}', -1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 hover:text-white rounded-lg flex items-center justify-center font-bold text-xs">
+                    <span class="font-mono font-black text-xs text-amber-400 px-1.5 min-w-[20px] text-center">${inCartQty}</span>
+                    <button type="button" onclick="event.stopPropagation(); changeCartQty('${prod.id}', -1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 active:scale-90 text-slate-300 hover:text-white rounded-lg flex items-center justify-center font-black text-xs">
                       -
                     </button>
                   </div>
                 ` : `
-                  <button onclick="addToCart('${prod.id}')" class="w-7 h-7 bg-brand-600 hover:bg-brand-500 active:scale-95 text-white rounded-lg flex items-center justify-center shadow">
+                  <button type="button" onclick="event.stopPropagation(); addToCart('${prod.id}')" class="w-7 h-7 bg-brand-600 hover:bg-brand-500 active:scale-95 text-white rounded-lg flex items-center justify-center shadow">
                     <i data-lucide="plus" class="w-4 h-4"></i>
                   </button>
                 `
@@ -866,7 +866,7 @@
       lucide.createIcons();
     }
 
-    /* پەنجەرەی شیکردنەوەی کاڵا + زوومی دوو پەنجە بەبێ نووسینی زیادە */
+    /* پەنجەرەی شیکردنەوەی کاڵا ڕێک لە ناوەڕاست و سەرەوە */
     function openProductDetailModal(prodId) {
       const prod = products.find(p => p.id === prodId);
       if (!prod) return;
@@ -897,7 +897,7 @@
       }
     }
 
-    /* سیستەمی زووم و ڕاکێشان بە پەنجە */
+    /* سیستەمی زووم بە پەنجە */
     function resetModalZoom() {
       modalZoomScale = 1;
       modalPanX = 0;
@@ -970,7 +970,7 @@
       });
     }
 
-    /* زیادکردن بۆ سەبەتە لەگەڵ جووڵەی سەبەتەکە */
+    /* سەبەتەی کڕین */
     function addToCart(prodId) {
       const prod = products.find(p => p.id === prodId);
       if (!prod || prod.stock <= 0) return;
@@ -985,7 +985,7 @@
 
       triggerCartAnimation();
       updateCartUI();
-      renderProductsGrid(); // بۆ نوێبوونەوەی ژمارەکە لەسەر کارتەکە
+      renderProductsGrid();
     }
 
     function triggerCartAnimation() {
