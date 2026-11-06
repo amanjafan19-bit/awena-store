@@ -38,6 +38,12 @@
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     #modalImageContainer { touch-action: none; }
+    @keyframes cartBump {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.22); }
+      100% { transform: scale(1); }
+    }
+    .cart-bump { animation: cartBump 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
   </style>
 </head>
 <body class="bg-black text-slate-100 min-h-screen pb-24 select-none">
@@ -79,7 +85,9 @@
     
     <div class="bg-gradient-to-b from-brand-card to-black p-3.5 rounded-2xl border border-brand-border text-center space-y-2 shadow-xl">
       <span class="text-[10px] bg-brand-500/20 text-brand-400 border border-brand-border px-2 py-0.5 rounded-full font-bold">فرۆشگای فەرمی ئاوێنە دیتەیڵینگ</span>
-      <h2 class="text-sm font-black text-white">مەوادی ئەسڵی پۆڵیش، نانۆ و کارکێر</h2>
+      
+      <!-- وتەی داواکراو -->
+      <h2 class="text-sm font-black text-white">« ئۆتۆمبێلی خاوێنتر، شۆفێری دڵخۆشتر »</h2>
       
       <a href="https://api.whatsapp.com/send?phone=9647709663858&text=سڵاو،%20لە%20فرۆشگای%20AWENA%20STORE%20پەیوەندی%20دەکەم،%20ڕاوێژێکم%20ویست%20دەربارەی%20مەوادەکانتان." 
          target="_blank" 
@@ -125,18 +133,29 @@
   </main>
 
   <!-- ==========================================
-       2. سەبەتەی کڕینی سەرئاوکەوتوو (Floating Cart)
+       2. سەبەتەی کڕینی سەرئاوکەوتوو بە شێوازی سەبەتەی ڕاستەقینە
        ========================================== -->
   <div id="floatingCartBar" class="hidden fixed bottom-3 left-4 right-4 z-40 max-w-md mx-auto">
-    <div onclick="openCheckoutModal()" class="bg-gradient-to-r from-brand-600 to-sky-500 hover:from-brand-500 text-white p-3 rounded-2xl shadow-2xl shadow-sky-600/40 flex items-center justify-between cursor-pointer active:scale-[0.99] transition border border-sky-400/30">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-xl bg-black/20 flex items-center justify-center font-bold text-xs" id="cartBadgeCount">0</div>
+    <div onclick="openCheckoutModal()" class="bg-gradient-to-r from-brand-600 via-sky-500 to-sky-600 hover:from-brand-500 text-white p-2.5 rounded-2xl shadow-2xl shadow-sky-600/40 flex items-center justify-between cursor-pointer active:scale-[0.99] transition border border-sky-400/30">
+      
+      <!-- ئایکۆنی سەبەتە کە ڕەقەمەکە لە ناوەڕاستیدایە -->
+      <div class="flex items-center gap-2.5">
+        <div id="cartBasketWrapper" class="relative flex items-center justify-center w-12 h-12 bg-black/35 rounded-2xl border border-sky-300/30 shadow-inner">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-sky-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8" cy="21" r="1.5" fill="currentColor"/>
+            <circle cx="19" cy="21" r="1.5" fill="currentColor"/>
+            <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+          </svg>
+          <span id="cartBadgeCount" class="absolute top-1 start-4 bg-amber-400 text-slate-950 font-black text-[11px] min-w-[20px] h-[20px] px-1 rounded-full flex items-center justify-center shadow-lg border border-slate-950 font-mono">0</span>
+        </div>
+
         <div>
-          <span class="text-[10px] text-sky-100 block">سەبەتەی کڕین</span>
-          <span class="text-xs font-black" id="cartTotalPreview">0 د.ع</span>
+          <span class="text-[10px] text-sky-100 block font-medium">سەبەتەی کڕین</span>
+          <span class="text-xs font-black text-white" id="cartTotalPreview">0 د.ع</span>
         </div>
       </div>
-      <div class="flex items-center gap-1 text-xs font-extrabold bg-black/20 px-3 py-1.5 rounded-xl">
+
+      <div class="flex items-center gap-1.5 text-xs font-extrabold bg-black/25 px-3.5 py-2 rounded-xl border border-white/10 hover:bg-black/35 transition">
         <span>تەواوکردنی کڕین</span>
         <i data-lucide="arrow-left" class="w-4 h-4"></i>
       </div>
@@ -202,9 +221,7 @@
     </div>
   </div>
 
-  <!-- ==========================================
-       4. مۆداڵی وردەکاریی کاڵا (بە ڕەشی تەواو و زوومی دوو پەنجە)
-       ========================================== -->
+  <!-- مۆداڵی وردەکاریی کاڵا بە ڕەشی تەواو و زووم -->
   <div id="productDetailModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-brand-card w-full max-w-md max-h-[92vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-brand-border shadow-2xl p-4 space-y-3 text-xs">
       
@@ -213,7 +230,6 @@
         <button onclick="closeProductDetailModal()" class="text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
-      <!-- شوێنی وێنە بە ڕەشی تەواوی قەترانی (#000000) بەبێ هیچ هێڵێک لە لایەکانەوە -->
       <div class="space-y-1">
         <div id="modalImageContainer" class="h-64 bg-black rounded-xl overflow-hidden border border-brand-border flex items-center justify-center relative cursor-grab">
           <img id="modalProductImg" src="" class="w-full h-full object-contain pointer-events-none origin-center transition-transform duration-75">
@@ -242,11 +258,11 @@
   </div>
 
   <!-- ==========================================
-       5. شاشەی بەڕێوەبەر (دابەشکراو بۆ ٣ بەش)
+       4. شاشەی بەڕێوەبەر (دابەشکراو بۆ ٣ بەش)
        ========================================== -->
   <main id="adminView" class="max-w-md mx-auto p-4 space-y-4 hidden pb-28">
 
-    <!-- بەشی ١: کاڵاکان و مەخزەن (ناوەڕاست - دیفۆڵتی سەرەکی) -->
+    <!-- بەشی ١: کاڵاکان و مەخزەن (ناوەڕاست) -->
     <section id="adminTabProducts" class="space-y-4">
       <div class="grid grid-cols-2 gap-2">
         <button onclick="openNewProductModal()" class="py-3 px-3 bg-brand-600 hover:bg-brand-500 active:scale-[0.99] text-white font-bold text-xs rounded-xl shadow-lg shadow-sky-600/30 flex items-center justify-center gap-1.5">
@@ -270,7 +286,6 @@
 
     <!-- بەشی ٢: قازانج و داهات و ئەرشیف (لای ڕاست) -->
     <section id="adminTabFinance" class="space-y-4 hidden">
-      
       <div class="space-y-2">
         <div class="flex items-center justify-between px-1">
           <span class="text-[11px] text-slate-400 font-bold">داشبۆردی دارایی و ژمێریاری</span>
@@ -355,7 +370,7 @@
   </main>
 
   <!-- ==========================================
-       6. شریتی خوارەوەی بەڕێوەبەر (Bottom Navigation)
+       5. شریتی خوارەوەی بەڕێوەبەر
        ========================================== -->
   <nav id="adminBottomNav" class="hidden fixed bottom-0 left-0 right-0 z-40 bg-black/95 backdrop-blur border-t border-brand-border py-2 px-3">
     <div class="max-w-md mx-auto grid grid-cols-3 gap-2">
@@ -377,7 +392,7 @@
   </nav>
 
   <!-- ==========================================
-       7. مۆداڵی فرۆشی ناو دوکان (کاش)
+       6. مۆداڵی فرۆشی ناو دوکان (کاش)
        ========================================== -->
   <div id="directSaleModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-brand-card w-full max-w-md rounded-t-2xl sm:rounded-2xl border border-brand-border shadow-2xl p-4 space-y-3.5 text-xs">
@@ -421,7 +436,7 @@
   </div>
 
   <!-- ==========================================
-       8. مۆداڵی داخڵکردنی کاڵای نوێ
+       7. مۆداڵی داخڵکردنی کاڵای نوێ
        ========================================== -->
   <div id="productFormModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-brand-card w-full max-w-md max-h-[92vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-brand-border shadow-2xl p-4 space-y-3.5 text-xs">
@@ -481,7 +496,7 @@
   </div>
 
   <!-- ==========================================
-       9. مۆداڵی بەڕێوەبەری بەش و براندەکان
+       8. مۆداڵی بەڕێوەبەری بەش و براندەکان
        ========================================== -->
   <div id="categoryManagerModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-brand-card w-full max-w-md max-h-[92vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-brand-border shadow-2xl p-4 space-y-3.5 text-xs">
@@ -503,7 +518,7 @@
   </div>
 
   <!-- ==========================================
-       10. کۆدی بەستنەوە، زوومی دوو پەنجە و کارپێکردن
+       9. کۆدی جاڤاسکریپت و هەموو سیستەمەکە
        ========================================== -->
   <script>
     const SUPABASE_URL = 'https://yryszfvdokaplaweqatj.supabase.co';
@@ -532,7 +547,6 @@
     let secretLogoTimer = null;
     let deferredPrompt = null;
 
-    // زوومی پێشکەوتوو بە دوو پەنجە و ڕاکێشان بۆ وێنەی بەرهەم
     let modalZoomScale = 1;
     let modalPanX = 0;
     let modalPanY = 0;
@@ -809,7 +823,6 @@
       container.innerHTML = list.map(prod => `
         <div class="bg-brand-card rounded-2xl border border-brand-border overflow-hidden p-2.5 flex flex-col justify-between space-y-2 hover:border-brand-500/40 transition shadow-sm">
           <div onclick="openProductDetailModal('${prod.id}')" class="cursor-pointer space-y-1.5">
-            <!-- پشتی وێنەکە بە ڕەشی قەترانی تەواو (#000000) دانراوە تا لەگەڵ وێنەکە ببێتە یەک پارچە -->
             <div class="h-36 bg-black rounded-xl overflow-hidden border border-brand-border/80 flex items-center justify-center relative">
               <img src="${prod.image_url || 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=400&q=80'}" class="w-full h-full object-contain">
               ${prod.subcategory ? `<span class="absolute top-1.5 start-1.5 text-[9px] bg-black/90 text-brand-400 font-bold px-1.5 py-0.5 rounded border border-brand-border">${prod.subcategory}</span>` : ''}
@@ -834,7 +847,6 @@
       lucide.createIcons();
     }
 
-    /* پەنجەرەی شیکردنەوەی کاڵا + زوومی دوو پەنجە */
     function openProductDetailModal(prodId) {
       const prod = products.find(p => p.id === prodId);
       if (!prod) return;
@@ -865,7 +877,6 @@
       }
     }
 
-    /* سیستەمی زووم و ڕاکێشان بە پەنجە لەسەر وێنەی کاڵا */
     function resetModalZoom() {
       modalZoomScale = 1;
       modalPanX = 0;
@@ -938,7 +949,6 @@
       });
     }
 
-    /* سەبەتەی کڕین (Cart System) */
     function addToCart(prodId) {
       const prod = products.find(p => p.id === prodId);
       if (!prod || prod.stock <= 0) return;
@@ -950,7 +960,18 @@
       } else {
         cart.push({ id: prod.id, name: prod.name, price: Number(prod.price_sale), cost: Number(prod.price_cost), qty: 1 });
       }
+
+      triggerCartAnimation();
       updateCartUI();
+    }
+
+    function triggerCartAnimation() {
+      const wrapper = document.getElementById('cartBasketWrapper');
+      if (wrapper) {
+        wrapper.classList.remove('cart-bump');
+        void wrapper.offsetWidth;
+        wrapper.classList.add('cart-bump');
+      }
     }
 
     function updateCartUI() {
