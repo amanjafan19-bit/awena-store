@@ -48,10 +48,9 @@
 </head>
 <body class="bg-black text-slate-100 min-h-screen pb-24 select-none">
 
-  <!-- Header: سەرپەڕەی خاوێن و شیکی پێشوو بەبێ دوگمەی زیادە -->
+  <!-- Header -->
   <header class="sticky top-0 z-40 bg-black/95 backdrop-blur border-b border-brand-border px-4 py-3 flex items-center justify-between">
     <div class="flex items-center gap-2.5">
-      <!-- لۆگۆ: ٣ جار لێدانی خێرا بۆ کردنەوەی ڕەمز -->
       <div onclick="handleSecretLogoClick()" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-sky-400 flex items-center justify-center shadow-lg shadow-sky-500/20 font-black text-xl text-white cursor-pointer active:scale-95 transition">
         A
       </div>
@@ -84,15 +83,14 @@
        ========================================== -->
   <main id="storefrontView" class="max-w-md mx-auto p-4 space-y-4">
     
-    <!-- بۆکسە ڕێک و جوانەکەی سەرەوە بە دروشم و دوگمەی پان و شیکی واتسئەپ وەک پێشوو -->
-    <div class="bg-gradient-to-b from-brand-card to-black p-4 rounded-2xl border border-brand-border text-center space-y-2.5 shadow-xl">
-      <span class="text-[10px] bg-brand-500/20 text-brand-400 border border-brand-border px-2.5 py-0.5 rounded-full font-bold">فرۆشگای فەرمی ئاوێنە دیتەیڵینگ</span>
+    <div class="bg-gradient-to-b from-brand-card to-black p-3.5 rounded-2xl border border-brand-border text-center space-y-2 shadow-xl">
+      <span class="text-[10px] bg-brand-500/20 text-brand-400 border border-brand-border px-2 py-0.5 rounded-full font-bold">فرۆشگای فەرمی ئاوێنە دیتەیڵینگ</span>
+      
       <h2 class="text-sm font-black text-white">« ئۆتۆمبێلی خاوێنتر، شۆفێری دڵخۆشتر »</h2>
-      <p class="text-[11px] text-slate-400">مەوادی ئەسڵی پۆڵیش، نانۆ و کارکێری سەیارە</p>
       
       <a href="https://api.whatsapp.com/send?phone=9647709663858&text=سڵاو،%20لە%20فرۆشگای%20AWENA%20STORE%20پەیوەندی%20دەکەم،%20ڕاوێژێکم%20ویست%20دەربارەی%20مەوادەکانتان." 
          target="_blank" 
-         class="w-full py-2.5 px-3 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition shadow">
+         class="w-full py-2 px-3 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition">
         <i data-lucide="message-circle" class="w-4 h-4"></i>
         <span>پرسیار و ڕاوێژ لەگەڵ پسپۆڕ لە واتسئەپ</span>
       </a>
@@ -222,30 +220,35 @@
   </div>
 
   <!-- ==========================================
-       4. مۆداڵی وردەکاریی کاڵا
+       4. مۆداڵی وردەکاریی کاڵا (ڕێک لە ناوەڕاست و سەرەوە، بێ نووسینی زووم)
        ========================================== -->
   <div id="productDetailModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
     <div class="bg-brand-card w-full max-w-md max-h-[92vh] overflow-y-auto rounded-2xl border border-brand-border shadow-2xl p-3.5 space-y-2.5 text-xs">
       
+      <!-- سەرپەڕە -->
       <div class="flex items-center justify-between border-b border-brand-border pb-1.5">
         <span class="text-[11px] text-brand-400 font-bold" id="modalProductBrand">براند</span>
         <button onclick="closeProductDetailModal()" class="text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
+      <!-- وێنەی بەرهەم بە تەواوی ڕەش (#000000) بەبێ نووسینی زووم لە ژێریدا -->
       <div id="modalImageContainer" class="h-64 sm:h-72 bg-black rounded-xl overflow-hidden border border-brand-border flex items-center justify-center relative cursor-grab">
         <img id="modalProductImg" src="" class="w-full h-full object-contain pointer-events-none origin-center transition-transform duration-75">
       </div>
 
+      <!-- ناونیشان و نرخ لە ژێر وێنەکە -->
       <div class="pt-0.5">
         <h3 class="font-extrabold text-base text-white leading-tight" id="modalProductTitle">ناوی کاڵا</h3>
         <span class="text-emerald-400 font-black text-sm block mt-1" id="modalProductPrice">0 د.ع</span>
       </div>
 
+      <!-- ڕێنمایی بەکارهێنان -->
       <div class="p-2.5 bg-black rounded-xl border border-brand-border space-y-1">
         <span class="text-brand-400 font-semibold block text-[11px]">ڕێنمایی و چۆنیەتی بەکارهێنان:</span>
         <p class="text-slate-300 leading-relaxed text-[11px]" id="modalProductDesc"></p>
       </div>
 
+      <!-- دوگمەی خستنە سەبەتە -->
       <button onclick="addProductFromModalToCart()" class="w-full py-3 bg-brand-600 hover:bg-brand-500 active:scale-[0.99] text-white font-bold rounded-xl shadow-lg shadow-sky-600/30 flex items-center justify-center gap-2">
         <i data-lucide="shopping-cart" class="w-4 h-4"></i>
         <span>خستنە سەبەتەی کڕین</span>
@@ -806,6 +809,7 @@
       return list;
     }
 
+    /* پیشاندانی کاڵاکان بە دوگمەی زیرەکی زیاد و کەم */
     function renderProductsGrid() {
       const container = document.getElementById('productsGrid');
       const list = getFilteredProducts();
@@ -816,33 +820,53 @@
         return;
       }
 
-      container.innerHTML = list.map(prod => `
-        <div class="bg-brand-card rounded-2xl border border-brand-border overflow-hidden p-2.5 flex flex-col justify-between space-y-2 hover:border-brand-500/40 transition shadow-sm">
-          <div onclick="openProductDetailModal('${prod.id}')" class="cursor-pointer space-y-1.5">
-            <div class="h-36 bg-black rounded-xl overflow-hidden border border-brand-border/80 flex items-center justify-center relative">
-              <img src="${prod.image_url || 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=400&q=80'}" class="w-full h-full object-contain">
-              ${prod.subcategory ? `<span class="absolute top-1.5 start-1.5 text-[9px] bg-black/90 text-brand-400 font-bold px-1.5 py-0.5 rounded border border-brand-border">${prod.subcategory}</span>` : ''}
-              ${prod.stock <= 0 ? `<span class="absolute inset-0 bg-black/85 flex items-center justify-center text-rose-400 font-bold text-[11px]">لە مەخزەن نەماوە</span>` : ''}
-            </div>
-            <div>
-              <h3 class="font-bold text-xs text-white line-clamp-2 leading-snug">${prod.name}</h3>
-              <span class="text-[10px] text-slate-400 mt-0.5 block">${prod.stock > 0 ? (prod.stock <= 3 ? `<span class="text-amber-400">تەنها ${prod.stock} دانە ماوە</span>` : '🟢 بەردەستە') : '❌ تەواو بووە'}</span>
-            </div>
-          </div>
+      container.innerHTML = list.map(prod => {
+        const cartItem = cart.find(c => c.id === prod.id);
+        const inCartQty = cartItem ? cartItem.qty : 0;
 
-          <div class="flex items-center justify-between pt-1 border-t border-brand-border/60">
-            <span class="font-black text-xs text-emerald-400">${Number(prod.price_sale).toLocaleString()} <span class="text-[9px]">د.ع</span></span>
-            ${prod.stock > 0 ? `
-              <button onclick="addToCart('${prod.id}')" class="w-7 h-7 bg-brand-600 hover:bg-brand-500 active:scale-95 text-white rounded-lg flex items-center justify-center shadow">
-                <i data-lucide="plus" class="w-4 h-4"></i>
-              </button>
-            ` : `<span class="text-[10px] text-slate-600 font-bold">بێ مەخزەن</span>`}
+        return `
+          <div class="bg-brand-card rounded-2xl border border-brand-border overflow-hidden p-2.5 flex flex-col justify-between space-y-2 hover:border-brand-500/40 transition shadow-sm">
+            <div onclick="openProductDetailModal('${prod.id}')" class="cursor-pointer space-y-1.5">
+              <div class="h-36 bg-black rounded-xl overflow-hidden border border-brand-border/80 flex items-center justify-center relative">
+                <img src="${prod.image_url || 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=400&q=80'}" class="w-full h-full object-contain">
+                ${prod.subcategory ? `<span class="absolute top-1.5 start-1.5 text-[9px] bg-black/90 text-brand-400 font-bold px-1.5 py-0.5 rounded border border-brand-border">${prod.subcategory}</span>` : ''}
+                ${prod.stock <= 0 ? `<span class="absolute inset-0 bg-black/85 flex items-center justify-center text-rose-400 font-bold text-[11px]">لە مەخزەن نەماوە</span>` : ''}
+              </div>
+              <div>
+                <h3 class="font-bold text-xs text-white line-clamp-2 leading-snug">${prod.name}</h3>
+                <span class="text-[10px] text-slate-400 mt-0.5 block">${prod.stock > 0 ? (prod.stock <= 3 ? `<span class="text-amber-400">تەنها ${prod.stock} دانە ماوە</span>` : '🟢 بەردەستە') : '❌ تەواو بووە'}</span>
+              </div>
+            </div>
+
+            <!-- دوگمەی زیاد و کەم لەسەر کارتەکە -->
+            <div class="flex items-center justify-between pt-1 border-t border-brand-border/60">
+              <span class="font-black text-xs text-emerald-400">${Number(prod.price_sale).toLocaleString()} <span class="text-[9px]">د.ع</span></span>
+              
+              ${prod.stock > 0 ? (
+                inCartQty > 0 ? `
+                  <div class="flex items-center bg-black border border-brand-500/40 rounded-xl p-0.5 shadow">
+                    <button type="button" onclick="event.stopPropagation(); changeCartQty('${prod.id}', 1)" class="w-6 h-6 bg-brand-600 hover:bg-brand-500 active:scale-90 text-white rounded-lg flex items-center justify-center font-black text-xs">
+                      +
+                    </button>
+                    <span class="font-mono font-black text-xs text-amber-400 px-1.5 min-w-[20px] text-center">${inCartQty}</span>
+                    <button type="button" onclick="event.stopPropagation(); changeCartQty('${prod.id}', -1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 active:scale-90 text-slate-300 hover:text-white rounded-lg flex items-center justify-center font-black text-xs">
+                      -
+                    </button>
+                  </div>
+                ` : `
+                  <button type="button" onclick="event.stopPropagation(); addToCart('${prod.id}')" class="w-7 h-7 bg-brand-600 hover:bg-brand-500 active:scale-95 text-white rounded-lg flex items-center justify-center shadow">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                  </button>
+                `
+              ) : `<span class="text-[10px] text-slate-600 font-bold">بێ مەخزەن</span>`}
+            </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
       lucide.createIcons();
     }
 
+    /* پەنجەرەی شیکردنەوەی کاڵا ڕێک لە ناوەڕاست و سەرەوە */
     function openProductDetailModal(prodId) {
       const prod = products.find(p => p.id === prodId);
       if (!prod) return;
@@ -873,6 +897,7 @@
       }
     }
 
+    /* سیستەمی زووم بە پەنجە */
     function resetModalZoom() {
       modalZoomScale = 1;
       modalPanX = 0;
@@ -945,6 +970,7 @@
       });
     }
 
+    /* سەبەتەی کڕین */
     function addToCart(prodId) {
       const prod = products.find(p => p.id === prodId);
       if (!prod || prod.stock <= 0) return;
@@ -959,6 +985,7 @@
 
       triggerCartAnimation();
       updateCartUI();
+      renderProductsGrid();
     }
 
     function triggerCartAnimation() {
@@ -1031,7 +1058,9 @@
       }
       renderCartItemsInModal();
       calculateOrderDelivery();
+      triggerCartAnimation();
       updateCartUI();
+      renderProductsGrid();
       if (cart.length === 0) closeCheckoutModal();
     }
 
@@ -1101,6 +1130,7 @@ ${itemsText}
 
       cart = [];
       updateCartUI();
+      renderProductsGrid();
       closeCheckoutModal();
       alert('داواکارییەکەت بە سەرکەوتوویی ئامادە کرا و ڕەوانەی واتسئەپ کرا!');
       loadAllData();
