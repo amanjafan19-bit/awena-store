@@ -269,7 +269,6 @@
         </button>
       </div>
 
-      <!-- فلتەری بەشەکان لە بەشی بەڕێوەبەر بۆ دۆزینەوەی خێرا لەناو کاڵاکاندا -->
       <div class="space-y-1 pt-1">
         <span class="text-[11px] text-slate-400 font-bold block px-1">فلتەرکردنی کاڵاکان بەپێی بەش:</span>
         <div id="adminCategoryFilterList" class="flex gap-1.5 overflow-x-auto pb-1 hide-scrollbar text-xs"></div>
@@ -340,7 +339,6 @@
         <div id="soldProductsReportList" class="space-y-1.5 max-h-48 overflow-y-auto"></div>
       </div>
 
-      <!-- ئەرشیفی کڕیاران بە پیشاندانی تەواوی کاڵا کڕدراوەکان کاتێک کلیک دەکرێت -->
       <div class="bg-brand-card p-3.5 rounded-2xl border border-brand-border space-y-2.5">
         <div class="flex items-center justify-between">
           <div>
@@ -440,7 +438,7 @@
   </div>
 
   <!-- ==========================================
-       8. مۆداڵی داخڵکردنی کاڵای نوێ (لەگەڵ پێشبینینی ڕاستەوخۆی وێنە)
+       8. مۆداڵی داخڵکردنی کاڵای نوێ
        ========================================== -->
   <div id="productFormModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-brand-card w-full max-w-md max-h-[92vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-brand-border shadow-2xl p-4 space-y-3.5 text-xs">
@@ -487,7 +485,6 @@
           <textarea id="prod_desc" rows="2" placeholder="بۆ سڕینەوەی کڕانی قووڵ بەکاردێت بە پادی پۆڵیشی زڤایزەر..." class="w-full bg-black border border-brand-border rounded-xl p-2 text-white focus:outline-none"></textarea>
         </div>
 
-        <!-- بەشی وێنە لەگەڵ پێشبینینی ڕاستەوخۆ دەستبەجێ لە ژێریدا -->
         <div class="space-y-1.5">
           <label class="text-slate-300 block">وێنەی کاڵا (لە گەلەری یان کامێرا)</label>
           <input type="file" id="prod_image_input" accept="image/*" class="w-full bg-black border border-brand-border rounded-xl p-2 text-slate-400 text-xs">
@@ -512,7 +509,7 @@
   </div>
 
   <!-- ==========================================
-       9. مۆداڵی بەڕێوەبەری بەشەکان (بە دوگمەی سەروخوارکردن ⬆️ ⬇️)
+       9. مۆداڵی بەڕێوەبەری بەشەکان
        ========================================== -->
   <div id="categoryManagerModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-brand-card w-full max-w-md max-h-[92vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-brand-border shadow-2xl p-4 space-y-3.5 text-xs">
@@ -537,7 +534,7 @@
   </div>
 
   <!-- ==========================================
-       10. کۆدی جاڤاسکریپت و هەموو سیستەمەکە
+       10. کۆدی جاڤاسکریپت و کارپێکردن (لەگەڵ History Back Button)
        ========================================== -->
   <script>
     const SUPABASE_URL = 'https://yryszfvdokaplaweqatj.supabase.co';
@@ -555,13 +552,13 @@
 
     let activeCategory = 'all';
     let activeSubcategory = 'all';
-    let activeAdminCategory = 'all'; // فلتەری کاڵاکان لە بەشی بەڕێوەبەر
+    let activeAdminCategory = 'all';
     let currentSort = 'newest';
     let searchQuery = '';
     let selectedModalProduct = null;
     let editingProductId = null;
     let currentAdminTab = 'products';
-    let expandedCustomerPhone = null; // کڕیاری کراوە لەناو ئەرشیف
+    let expandedCustomerPhone = null;
 
     let isAdminUnlocked = localStorage.getItem('awena_store_admin') === 'true';
     let secretLogoClicks = 0;
@@ -578,6 +575,45 @@
     let touchStartY = 0;
     let lastTapModalTime = 0;
 
+    /* ==========================================================
+       سیستەمی دوگمەی گەڕانەوەی مۆبایل (Smart Back Button Handler)
+       ========================================== */
+    const ALL_MODALS = [
+      'productDetailModal',
+      'checkoutModal',
+      'productFormModal',
+      'categoryManagerModal',
+      'directSaleModal'
+    ];
+
+    function pushModalHistory(modalId) {
+      if (!history.state || history.state.modal !== modalId) {
+        history.pushState({ modal: modalId }, '');
+      }
+    }
+
+    function closeModalSafely(modalId) {
+      const el = document.getElementById(modalId);
+      if (!el || el.classList.contains('hidden')) return;
+      el.classList.add('hidden');
+      if (modalId === 'productDetailModal') resetModalZoom();
+      if (history.state && history.state.modal === modalId) {
+        history.back();
+      }
+    }
+
+    // گوێگرتن لە دوگمەی گەڕانەوە یان ڕاکێشانی پەنجە لە مۆبایلدا
+    window.addEventListener('popstate', () => {
+      ALL_MODALS.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !el.classList.contains('hidden')) {
+          el.classList.add('hidden');
+          if (id === 'productDetailModal') resetModalZoom();
+        }
+      });
+    });
+
+    /* PWA Install Prompt */
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
@@ -711,7 +747,6 @@
         ]);
 
         if (catRes.data) {
-          // جیاکردنەوەی ڕیزبەندی بەشەکان
           const orderSetting = catRes.data.find(c => c.id === 'app_categories_order');
           let rawCats = catRes.data.filter(c => c.id !== 'app_categories_order');
 
@@ -758,7 +793,7 @@
 
     /* ==========================================================
        دیدگای کڕیار (Storefront Logic)
-       ========================================================== */
+       ========================================== */
     function renderStorefront() {
       renderCategoriesBar();
       renderSubcategoriesBar();
@@ -850,7 +885,6 @@
       return list;
     }
 
-    /* پیشاندانی کاڵاکان بە دوگمەی زیرەکی زیاد و کەم */
     function renderProductsGrid() {
       const container = document.getElementById('productsGrid');
       const list = getFilteredProducts();
@@ -906,7 +940,6 @@
       lucide.createIcons();
     }
 
-    /* پەنجەرەی شیکردنەوەی کاڵا ڕێک لە سەرەوە و ناوەڕاست */
     function openProductDetailModal(prodId) {
       const prod = products.find(p => p.id === prodId);
       if (!prod) return;
@@ -922,12 +955,12 @@
       resetModalZoom();
 
       document.getElementById('productDetailModal').classList.remove('hidden');
+      pushModalHistory('productDetailModal');
       lucide.createIcons();
     }
 
     function closeProductDetailModal() {
-      document.getElementById('productDetailModal').classList.add('hidden');
-      resetModalZoom();
+      closeModalSafely('productDetailModal');
     }
 
     function addProductFromModalToCart() {
@@ -937,7 +970,6 @@
       }
     }
 
-    /* سیستەمی زووم بە پەنجە */
     function resetModalZoom() {
       modalZoomScale = 1;
       modalPanX = 0;
@@ -1063,11 +1095,12 @@
       calculateOrderDelivery();
 
       document.getElementById('checkoutModal').classList.remove('hidden');
+      pushModalHistory('checkoutModal');
       lucide.createIcons();
     }
 
     function closeCheckoutModal() {
-      document.getElementById('checkoutModal').classList.add('hidden');
+      closeModalSafely('checkoutModal');
     }
 
     function renderCartItemsInModal() {
@@ -1176,7 +1209,7 @@ ${itemsText}
 
     /* ==========================================================
        داشبۆردی بەڕێوەبەر (Admin Back-Office)
-       ========================================================== */
+       ========================================== */
     function renderAdminDashboard() {
       const approvedOrders = orders.filter(o => o.status === 'approved');
       const totalRev = approvedOrders.reduce((sum, o) => sum + Number(o.subtotal), 0);
@@ -1311,7 +1344,6 @@ ${itemsText}
       `).join('');
     }
 
-    /* ئەرشیفی کڕیاران بە پیشاندانی تەواوی کاڵا کڕدراوەکان بە کلیک */
     function renderCustomerArchive() {
       const container = document.getElementById('customerArchiveList');
       const approvedOrders = orders.filter(o => o.status === 'approved');
@@ -1350,7 +1382,6 @@ ${itemsText}
         const isExpanded = expandedCustomerPhone === cust.phone;
         return `
           <div class="bg-black p-2.5 rounded-xl border border-brand-border space-y-2 text-xs transition">
-            <!-- سەرپەڕەی کارتی کڕیار -->
             <div onclick="toggleCustomerArchiveExpand('${cust.phone}')" class="flex items-start justify-between cursor-pointer select-none hover:opacity-90">
               <div>
                 <span class="font-extrabold text-white block text-xs">${cust.name}</span>
@@ -1372,7 +1403,6 @@ ${itemsText}
               <span class="font-black text-emerald-400">${cust.totalSpent.toLocaleString()} د.ع</span>
             </div>
 
-            <!-- تەواوی ئەو کاڵایانەی ئەم کڕیارە کڕیویەتی (کە دەکرێتەوە) -->
             ${isExpanded ? `
               <div class="pt-2 border-t border-brand-border/60 space-y-2 mt-1">
                 <span class="text-[10px] text-brand-400 font-bold block">مێژووی تەواوی کڕینەکانی ئەم کڕیارە:</span>
@@ -1431,11 +1461,12 @@ ${itemsText}
       autoFillDirectSalePrice();
 
       document.getElementById('directSaleModal').classList.remove('hidden');
+      pushModalHistory('directSaleModal');
       lucide.createIcons();
     }
 
     function closeDirectSaleModal() {
-      document.getElementById('directSaleModal').classList.add('hidden');
+      closeModalSafely('directSaleModal');
     }
 
     function autoFillDirectSalePrice() {
@@ -1509,15 +1540,15 @@ ${itemsText}
       loadAllData();
     }
 
-    /* بەڕێوەبردنی بەشەکان لەگەڵ سەروخوارکردن (⬆️ و ⬇️) */
     function openCategoryManagerModal() {
       renderCategoryManagerModalList();
       document.getElementById('categoryManagerModal').classList.remove('hidden');
+      pushModalHistory('categoryManagerModal');
       lucide.createIcons();
     }
 
     function closeCategoryManagerModal() {
-      document.getElementById('categoryManagerModal').classList.add('hidden');
+      closeModalSafely('categoryManagerModal');
     }
 
     function renderCategoryManagerModalList() {
@@ -1526,7 +1557,6 @@ ${itemsText}
         <div class="bg-black p-2.5 rounded-xl border border-brand-border space-y-2">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-1.5">
-              <!-- دوگمەکانی سەروخوارکردنی بەشەکان -->
               <div class="flex items-center gap-0.5">
                 <button onclick="moveCategoryItem(${idx}, -1)" ${idx === 0 ? 'disabled class="opacity-20 text-slate-500 p-1"' : 'class="p-1 bg-slate-900 hover:bg-slate-800 text-brand-400 rounded transition"'} title="بەرەو سەرەوە">
                   <i data-lucide="arrow-up" class="w-3.5 h-3.5"></i>
@@ -1557,7 +1587,6 @@ ${itemsText}
       lucide.createIcons();
     }
 
-    /* سەروخوارکردنی بەشەکان و پاشەکەوتکردنی ڕیزبەندی لە سێرڤەر */
     async function moveCategoryItem(index, direction) {
       const targetIndex = index + direction;
       if (targetIndex < 0 || targetIndex >= categories.length) return;
@@ -1570,7 +1599,6 @@ ${itemsText}
       renderCategoriesBar();
       renderAdminCategoriesFilter();
 
-      // پاشەکەوتکردنی ڕیزبەندییە نوێیەکە لە سێرڤەر
       const orderIds = categories.map(c => c.id);
       await dbClient.from('store_categories').upsert({
         id: 'app_categories_order',
@@ -1621,7 +1649,6 @@ ${itemsText}
       renderCategoryManagerModalList();
     }
 
-    /* فلتەری بەشەکان لە بەشی بەڕێوەبەردا */
     function renderAdminCategoriesFilter() {
       const container = document.getElementById('adminCategoryFilterList');
       if (!container) return;
@@ -1654,6 +1681,7 @@ ${itemsText}
 
       populateCategoryDropdownForForm();
       document.getElementById('productFormModal').classList.remove('hidden');
+      pushModalHistory('productFormModal');
       lucide.createIcons();
     }
 
@@ -1676,7 +1704,7 @@ ${itemsText}
     }
 
     function closeProductFormModal() {
-      document.getElementById('productFormModal').classList.add('hidden');
+      closeModalSafely('productFormModal');
     }
 
     async function handleProductFormSubmit(e) {
@@ -1735,7 +1763,6 @@ ${itemsText}
       });
     }
 
-    // گوێگرتن لە هەڵبژاردنی وێنە بۆ پێشبینینی دەستبەجێ
     document.addEventListener('DOMContentLoaded', () => {
       const fileInput = document.getElementById('prod_image_input');
       if (fileInput) {
@@ -1749,7 +1776,6 @@ ${itemsText}
       }
     });
 
-    /* پیشاندانی کاڵاکان لە بەڕێوەبەر لەگەڵ فلتەری بەشەکان */
     function renderAdminProductsList() {
       const container = document.getElementById('adminProductsList');
       let list = products;
@@ -1844,6 +1870,7 @@ ${itemsText}
 
       populateCategoryDropdownForForm(prod.category, prod.subcategory);
       document.getElementById('productFormModal').classList.remove('hidden');
+      pushModalHistory('productFormModal');
       lucide.createIcons();
     }
 
