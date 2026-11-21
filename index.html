@@ -83,14 +83,14 @@
        ========================================== -->
   <main id="storefrontView" class="max-w-md mx-auto p-4 space-y-4">
     
-    <div class="bg-gradient-to-b from-brand-card to-black p-3.5 rounded-2xl border border-brand-border text-center space-y-2 shadow-xl">
-      <span class="text-[10px] bg-brand-500/20 text-brand-400 border border-brand-border px-2 py-0.5 rounded-full font-bold">فرۆشگای فەرمی ئاوێنە دیتەیڵینگ</span>
-      
+    <div class="bg-gradient-to-b from-brand-card to-black p-4 rounded-2xl border border-brand-border text-center space-y-2.5 shadow-xl">
+      <span class="text-[10px] bg-brand-500/20 text-brand-400 border border-brand-border px-2.5 py-0.5 rounded-full font-bold">فرۆشگای فەرمی ئاوێنە دیتەیڵینگ</span>
       <h2 class="text-sm font-black text-white">« ئۆتۆمبێلی خاوێنتر، شۆفێری دڵخۆشتر »</h2>
+      <p class="text-[11px] text-slate-400">مەوادی ئەسڵی پۆڵیش، نانۆ و کارکێری سەیارە</p>
       
       <a href="https://api.whatsapp.com/send?phone=9647709663858&text=سڵاو،%20لە%20فرۆشگای%20AWENA%20STORE%20پەیوەندی%20دەکەم،%20ڕاوێژێکم%20ویست%20دەربارەی%20مەوادەکانتان." 
          target="_blank" 
-         class="w-full py-2 px-3 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition">
+         class="w-full py-2.5 px-3 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition shadow">
         <i data-lucide="message-circle" class="w-4 h-4"></i>
         <span>پرسیار و ڕاوێژ لەگەڵ پسپۆڕ لە واتسئەپ</span>
       </a>
@@ -132,7 +132,7 @@
   </main>
 
   <!-- ==========================================
-       2. سەبەتەی کڕینی سەرئاوکەوتوو بە شێوازی سەبەتە
+       2. سەبەتەی کڕینی سەرئاوکەوتوو
        ========================================== -->
   <div id="floatingCartBar" class="hidden fixed bottom-3 left-4 right-4 z-40 max-w-md mx-auto">
     <div onclick="openCheckoutModal()" class="bg-gradient-to-r from-brand-600 via-sky-500 to-sky-600 hover:from-brand-500 text-white p-2.5 rounded-2xl shadow-2xl shadow-sky-600/40 flex items-center justify-between cursor-pointer active:scale-[0.99] transition border border-sky-400/30">
@@ -220,35 +220,30 @@
   </div>
 
   <!-- ==========================================
-       4. مۆداڵی وردەکاریی کاڵا (ڕێک لە ناوەڕاست و سەرەوە، بێ نووسینی زووم)
+       4. مۆداڵی وردەکاریی کاڵا
        ========================================== -->
   <div id="productDetailModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
     <div class="bg-brand-card w-full max-w-md max-h-[92vh] overflow-y-auto rounded-2xl border border-brand-border shadow-2xl p-3.5 space-y-2.5 text-xs">
       
-      <!-- سەرپەڕە -->
       <div class="flex items-center justify-between border-b border-brand-border pb-1.5">
         <span class="text-[11px] text-brand-400 font-bold" id="modalProductBrand">براند</span>
         <button onclick="closeProductDetailModal()" class="text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
-      <!-- وێنەی بەرهەم بە تەواوی ڕەش (#000000) بەبێ نووسینی زووم لە ژێریدا -->
       <div id="modalImageContainer" class="h-64 sm:h-72 bg-black rounded-xl overflow-hidden border border-brand-border flex items-center justify-center relative cursor-grab">
         <img id="modalProductImg" src="" class="w-full h-full object-contain pointer-events-none origin-center transition-transform duration-75">
       </div>
 
-      <!-- ناونیشان و نرخ لە ژێر وێنەکە -->
       <div class="pt-0.5">
         <h3 class="font-extrabold text-base text-white leading-tight" id="modalProductTitle">ناوی کاڵا</h3>
         <span class="text-emerald-400 font-black text-sm block mt-1" id="modalProductPrice">0 د.ع</span>
       </div>
 
-      <!-- ڕێنمایی بەکارهێنان -->
       <div class="p-2.5 bg-black rounded-xl border border-brand-border space-y-1">
         <span class="text-brand-400 font-semibold block text-[11px]">ڕێنمایی و چۆنیەتی بەکارهێنان:</span>
         <p class="text-slate-300 leading-relaxed text-[11px]" id="modalProductDesc"></p>
       </div>
 
-      <!-- دوگمەی خستنە سەبەتە -->
       <button onclick="addProductFromModalToCart()" class="w-full py-3 bg-brand-600 hover:bg-brand-500 active:scale-[0.99] text-white font-bold rounded-xl shadow-lg shadow-sky-600/30 flex items-center justify-center gap-2">
         <i data-lucide="shopping-cart" class="w-4 h-4"></i>
         <span>خستنە سەبەتەی کڕین</span>
@@ -262,7 +257,7 @@
   <main id="adminView" class="max-w-md mx-auto p-4 space-y-4 hidden pb-28">
 
     <!-- بەشی ١: کاڵاکان و مەخزەن -->
-    <section id="adminTabProducts" class="space-y-4">
+    <section id="adminTabProducts" class="space-y-3.5">
       <div class="grid grid-cols-2 gap-2">
         <button onclick="openNewProductModal()" class="py-3 px-3 bg-brand-600 hover:bg-brand-500 active:scale-[0.99] text-white font-bold text-xs rounded-xl shadow-lg shadow-sky-600/30 flex items-center justify-center gap-1.5">
           <i data-lucide="plus-circle" class="w-4 h-4"></i>
@@ -274,10 +269,16 @@
         </button>
       </div>
 
+      <!-- فلتەری بەشەکان لە بەشی بەڕێوەبەر بۆ دۆزینەوەی خێرا لەناو کاڵاکاندا -->
+      <div class="space-y-1 pt-1">
+        <span class="text-[11px] text-slate-400 font-bold block px-1">فلتەرکردنی کاڵاکان بەپێی بەش:</span>
+        <div id="adminCategoryFilterList" class="flex gap-1.5 overflow-x-auto pb-1 hide-scrollbar text-xs"></div>
+      </div>
+
       <div class="space-y-2">
         <div class="flex items-center justify-between px-1">
-          <h3 class="text-xs font-bold text-slate-400">سەرجەم کاڵاکان لە مەخزەن</h3>
-          <span class="text-[10px] bg-black text-brand-400 border border-brand-border px-2 py-0.5 rounded-full font-mono" id="statStockTotal">0 دانە</span>
+          <h3 class="text-xs font-bold text-slate-400" id="adminProductsSectionTitle">سەرجەم کاڵاکان لە مەخزەن</h3>
+          <span class="text-[10px] bg-black text-brand-400 border border-brand-border px-2 py-0.5 rounded-full font-mono font-bold" id="statStockTotal">0 دانە</span>
         </div>
         <div id="adminProductsList" class="space-y-2"></div>
       </div>
@@ -339,15 +340,19 @@
         <div id="soldProductsReportList" class="space-y-1.5 max-h-48 overflow-y-auto"></div>
       </div>
 
+      <!-- ئەرشیفی کڕیاران بە پیشاندانی تەواوی کاڵا کڕدراوەکان کاتێک کلیک دەکرێت -->
       <div class="bg-brand-card p-3.5 rounded-2xl border border-brand-border space-y-2.5">
         <div class="flex items-center justify-between">
-          <h3 class="font-bold text-xs text-white flex items-center gap-1.5">
-            <i data-lucide="users" class="w-3.5 h-3.5 text-sky-400"></i>
-            <span>ئەرشیفی کڕیاران</span>
-          </h3>
+          <div>
+            <h3 class="font-bold text-xs text-white flex items-center gap-1.5">
+              <i data-lucide="users" class="w-3.5 h-3.5 text-sky-400"></i>
+              <span>ئەرشیفی کڕیاران</span>
+            </h3>
+            <span class="text-[9px] text-slate-400">کلیک لەسەر هەر کڕیارێک بکە بۆ بینینی هەموو کڕینەکانی</span>
+          </div>
           <span class="text-[10px] text-slate-400" id="customersCountBadge">0 کڕیار</span>
         </div>
-        <div id="customerArchiveList" class="space-y-2 max-h-60 overflow-y-auto"></div>
+        <div id="customerArchiveList" class="space-y-2 max-h-80 overflow-y-auto"></div>
       </div>
     </section>
 
@@ -435,7 +440,7 @@
   </div>
 
   <!-- ==========================================
-       8. مۆداڵی داخڵکردنی کاڵای نوێ
+       8. مۆداڵی داخڵکردنی کاڵای نوێ (لەگەڵ پێشبینینی ڕاستەوخۆی وێنە)
        ========================================== -->
   <div id="productFormModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-brand-card w-full max-w-md max-h-[92vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-brand-border shadow-2xl p-4 space-y-3.5 text-xs">
@@ -482,9 +487,21 @@
           <textarea id="prod_desc" rows="2" placeholder="بۆ سڕینەوەی کڕانی قووڵ بەکاردێت بە پادی پۆڵیشی زڤایزەر..." class="w-full bg-black border border-brand-border rounded-xl p-2 text-white focus:outline-none"></textarea>
         </div>
 
-        <div>
-          <label class="text-slate-300 block mb-1">وێنەی کاڵا (لە گەلەری یان کامێرا)</label>
+        <!-- بەشی وێنە لەگەڵ پێشبینینی ڕاستەوخۆ دەستبەجێ لە ژێریدا -->
+        <div class="space-y-1.5">
+          <label class="text-slate-300 block">وێنەی کاڵا (لە گەلەری یان کامێرا)</label>
           <input type="file" id="prod_image_input" accept="image/*" class="w-full bg-black border border-brand-border rounded-xl p-2 text-slate-400 text-xs">
+          
+          <div id="imagePreviewContainer" class="hidden p-2.5 bg-black rounded-xl border border-brand-border flex items-center gap-3">
+            <img id="imagePreviewImg" src="" class="w-16 h-16 object-contain rounded-lg bg-black border border-brand-border">
+            <div class="text-[11px] space-y-0.5">
+              <span class="text-emerald-400 font-bold block flex items-center gap-1">
+                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+                <span>وێنەکە دیاریکرا</span>
+              </span>
+              <span class="text-[10px] text-slate-400 block">ئەم وێنەیە لەگەڵ بەرهەمەکە پاشەکەوت دەبێت</span>
+            </div>
+          </div>
         </div>
 
         <button type="submit" id="prodSubmitBtn" class="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl shadow-lg shadow-sky-600/30">
@@ -495,12 +512,15 @@
   </div>
 
   <!-- ==========================================
-       8. مۆداڵی بەڕێوەبەری بەش و براندەکان
+       9. مۆداڵی بەڕێوەبەری بەشەکان (بە دوگمەی سەروخوارکردن ⬆️ ⬇️)
        ========================================== -->
   <div id="categoryManagerModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="bg-brand-card w-full max-w-md max-h-[92vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-brand-border shadow-2xl p-4 space-y-3.5 text-xs">
       <div class="flex items-center justify-between border-b border-brand-border pb-2.5">
-        <h3 class="font-bold text-sm text-white">بەڕێوەبردنی بەشەکان و براندەکان</h3>
+        <div>
+          <h3 class="font-bold text-sm text-white">بەڕێوەبردنی بەشەکان و براندەکان</h3>
+          <span class="text-[10px] text-slate-400">بە دوگمەی ⬆️ و ⬇️ ڕیزبەندی بەشەکان لە فرۆشگا بگۆڕە</span>
+        </div>
         <button onclick="closeCategoryManagerModal()" class="text-slate-400 hover:text-white p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
@@ -517,7 +537,7 @@
   </div>
 
   <!-- ==========================================
-       9. کۆدی جاڤاسکریپت و هەموو سیستەمەکە
+       10. کۆدی جاڤاسکریپت و هەموو سیستەمەکە
        ========================================== -->
   <script>
     const SUPABASE_URL = 'https://yryszfvdokaplaweqatj.supabase.co';
@@ -535,11 +555,13 @@
 
     let activeCategory = 'all';
     let activeSubcategory = 'all';
+    let activeAdminCategory = 'all'; // فلتەری کاڵاکان لە بەشی بەڕێوەبەر
     let currentSort = 'newest';
     let searchQuery = '';
     let selectedModalProduct = null;
     let editingProductId = null;
     let currentAdminTab = 'products';
+    let expandedCustomerPhone = null; // کڕیاری کراوە لەناو ئەرشیف
 
     let isAdminUnlocked = localStorage.getItem('awena_store_admin') === 'true';
     let secretLogoClicks = 0;
@@ -665,6 +687,8 @@
         document.getElementById('adminTabProducts').classList.remove('hidden');
         const activeBtn = document.getElementById('adminNav-products');
         activeBtn.className = 'admin-nav-btn py-1.5 px-2 rounded-xl flex flex-col items-center justify-center text-brand-400 font-extrabold transition text-[11px] bg-brand-500/10 border border-brand-500/20';
+        renderAdminCategoriesFilter();
+        renderAdminProductsList();
       } else if (tabName === 'finance') {
         document.getElementById('adminTabFinance').classList.remove('hidden');
         const activeBtn = document.getElementById('adminNav-finance');
@@ -686,7 +710,24 @@
           dbClient.from('store_orders').select('*').order('created_at', { ascending: false })
         ]);
 
-        if (catRes.data) categories = catRes.data;
+        if (catRes.data) {
+          // جیاکردنەوەی ڕیزبەندی بەشەکان
+          const orderSetting = catRes.data.find(c => c.id === 'app_categories_order');
+          let rawCats = catRes.data.filter(c => c.id !== 'app_categories_order');
+
+          if (orderSetting && Array.isArray(orderSetting.subcategories)) {
+            const orderIds = orderSetting.subcategories;
+            rawCats.sort((a, b) => {
+              let idxA = orderIds.indexOf(a.id);
+              let idxB = orderIds.indexOf(b.id);
+              if (idxA === -1) idxA = 999;
+              if (idxB === -1) idxB = 999;
+              return idxA - idxB;
+            });
+          }
+          categories = rawCats;
+        }
+
         if (prodRes.data) products = prodRes.data;
         if (delRes.data) deliveryRates = delRes.data;
         if (ordRes.data) orders = ordRes.data;
@@ -712,7 +753,7 @@
         await dbClient.from('store_categories').upsert(c);
       }
       const res = await dbClient.from('store_categories').select('*');
-      if (res.data) categories = res.data;
+      if (res.data) categories = res.data.filter(c => c.id !== 'app_categories_order');
     }
 
     /* ==========================================================
@@ -838,7 +879,6 @@
               </div>
             </div>
 
-            <!-- دوگمەی زیاد و کەم لەسەر کارتەکە -->
             <div class="flex items-center justify-between pt-1 border-t border-brand-border/60">
               <span class="font-black text-xs text-emerald-400">${Number(prod.price_sale).toLocaleString()} <span class="text-[9px]">د.ع</span></span>
               
@@ -866,7 +906,7 @@
       lucide.createIcons();
     }
 
-    /* پەنجەرەی شیکردنەوەی کاڵا ڕێک لە ناوەڕاست و سەرەوە */
+    /* پەنجەرەی شیکردنەوەی کاڵا ڕێک لە سەرەوە و ناوەڕاست */
     function openProductDetailModal(prodId) {
       const prod = products.find(p => p.id === prodId);
       if (!prod) return;
@@ -970,7 +1010,6 @@
       });
     }
 
-    /* سەبەتەی کڕین */
     function addToCart(prodId) {
       const prod = products.find(p => p.id === prodId);
       if (!prod || prod.stock <= 0) return;
@@ -1058,7 +1097,6 @@
       }
       renderCartItemsInModal();
       calculateOrderDelivery();
-      triggerCartAnimation();
       updateCartUI();
       renderProductsGrid();
       if (cart.length === 0) closeCheckoutModal();
@@ -1155,6 +1193,7 @@ ${itemsText}
       renderSoldProductsReport();
       renderCustomerArchive();
       renderAdminDeliveryRates();
+      renderAdminCategoriesFilter();
       renderAdminProductsList();
       lucide.createIcons();
     }
@@ -1272,6 +1311,7 @@ ${itemsText}
       `).join('');
     }
 
+    /* ئەرشیفی کڕیاران بە پیشاندانی تەواوی کاڵا کڕدراوەکان بە کلیک */
     function renderCustomerArchive() {
       const container = document.getElementById('customerArchiveList');
       const approvedOrders = orders.filter(o => o.status === 'approved');
@@ -1287,11 +1327,13 @@ ${itemsText}
             city: ord.city || 'کوردستان',
             address: ord.address || '',
             ordersCount: 0,
-            totalSpent: 0
+            totalSpent: 0,
+            ordersList: []
           };
         }
         customerMap[phone].ordersCount++;
         customerMap[phone].totalSpent += Number(ord.total || 0);
+        customerMap[phone].ordersList.push(ord);
       });
 
       const customerList = Object.values(customerMap);
@@ -1304,24 +1346,63 @@ ${itemsText}
 
       customerList.sort((a, b) => b.totalSpent - a.totalSpent);
 
-      container.innerHTML = customerList.map(cust => `
-        <div class="bg-black p-2.5 rounded-xl border border-brand-border space-y-1.5 text-xs">
-          <div class="flex items-start justify-between">
-            <div>
-              <span class="font-extrabold text-white block">${cust.name}</span>
-              <span class="text-[10px] text-slate-400">${cust.city} ${cust.address ? `• ${cust.address}` : ''}</span>
+      container.innerHTML = customerList.map(cust => {
+        const isExpanded = expandedCustomerPhone === cust.phone;
+        return `
+          <div class="bg-black p-2.5 rounded-xl border border-brand-border space-y-2 text-xs transition">
+            <!-- سەرپەڕەی کارتی کڕیار -->
+            <div onclick="toggleCustomerArchiveExpand('${cust.phone}')" class="flex items-start justify-between cursor-pointer select-none hover:opacity-90">
+              <div>
+                <span class="font-extrabold text-white block text-xs">${cust.name}</span>
+                <span class="text-[10px] text-slate-400">${cust.city} ${cust.address ? `• ${cust.address}` : ''}</span>
+              </div>
+              <div class="flex items-center gap-1.5" onclick="event.stopPropagation();">
+                <a href="https://api.whatsapp.com/send?phone=964${cust.phone.replace(/^0+/, '')}" target="_blank" class="p-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 rounded-lg flex items-center gap-1 text-[10px] font-bold">
+                  <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                  <span>واتسئەپ</span>
+                </a>
+              </div>
             </div>
-            <a href="https://api.whatsapp.com/send?phone=964${cust.phone.replace(/^0+/, '')}" target="_blank" class="p-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 rounded-lg flex items-center gap-1 text-[10px] font-bold">
-              <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
-              <span>واتسئەپ</span>
-            </a>
+
+            <div onclick="toggleCustomerArchiveExpand('${cust.phone}')" class="flex items-center justify-between text-[11px] pt-1 border-t border-brand-border/40 cursor-pointer">
+              <span class="text-slate-400 flex items-center gap-1">
+                <span>${cust.ordersCount} کڕین</span>
+                <i data-lucide="${isExpanded ? 'chevron-up' : 'chevron-down'}" class="w-3.5 h-3.5 text-brand-400"></i>
+              </span>
+              <span class="font-black text-emerald-400">${cust.totalSpent.toLocaleString()} د.ع</span>
+            </div>
+
+            <!-- تەواوی ئەو کاڵایانەی ئەم کڕیارە کڕیویەتی (کە دەکرێتەوە) -->
+            ${isExpanded ? `
+              <div class="pt-2 border-t border-brand-border/60 space-y-2 mt-1">
+                <span class="text-[10px] text-brand-400 font-bold block">مێژووی تەواوی کڕینەکانی ئەم کڕیارە:</span>
+                ${cust.ordersList.map((ord, oIdx) => `
+                  <div class="bg-slate-900/80 p-2 rounded-lg border border-brand-border/50 space-y-1 text-[10px]">
+                    <div class="flex justify-between items-center text-slate-400">
+                      <span>داواکاری #${oIdx + 1} (${ord.status === 'approved' ? 'پەسەندکراو' : ord.status})</span>
+                      <span class="font-mono text-emerald-400 font-bold">${Number(ord.total).toLocaleString()} د.ع</span>
+                    </div>
+                    <div class="space-y-0.5 text-slate-200">
+                      ${(ord.items || []).map(i => `
+                        <div class="flex justify-between text-[10px]">
+                          <span>• ${i.name}</span>
+                          <span class="font-mono text-slate-400">${i.qty} دانە</span>
+                        </div>
+                      `).join('')}
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
           </div>
-          <div class="flex items-center justify-between text-[11px] pt-1 border-t border-brand-border/40">
-            <span class="text-slate-400">${cust.ordersCount} کڕین ئەنجامدراوە</span>
-            <span class="font-black text-emerald-400">${cust.totalSpent.toLocaleString()} د.ع</span>
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function toggleCustomerArchiveExpand(phone) {
+      expandedCustomerPhone = (expandedCustomerPhone === phone) ? null : phone;
+      renderCustomerArchive();
     }
 
     async function resetTestDataPrompt() {
@@ -1428,6 +1509,7 @@ ${itemsText}
       loadAllData();
     }
 
+    /* بەڕێوەبردنی بەشەکان لەگەڵ سەروخوارکردن (⬆️ و ⬇️) */
     function openCategoryManagerModal() {
       renderCategoryManagerModalList();
       document.getElementById('categoryManagerModal').classList.remove('hidden');
@@ -1440,12 +1522,24 @@ ${itemsText}
 
     function renderCategoryManagerModalList() {
       const container = document.getElementById('categoriesManagerList');
-      container.innerHTML = categories.map(cat => `
+      container.innerHTML = categories.map((cat, idx) => `
         <div class="bg-black p-2.5 rounded-xl border border-brand-border space-y-2">
           <div class="flex items-center justify-between">
-            <span class="font-extrabold text-white text-xs">${cat.name}</span>
+            <div class="flex items-center gap-1.5">
+              <!-- دوگمەکانی سەروخوارکردنی بەشەکان -->
+              <div class="flex items-center gap-0.5">
+                <button onclick="moveCategoryItem(${idx}, -1)" ${idx === 0 ? 'disabled class="opacity-20 text-slate-500 p-1"' : 'class="p-1 bg-slate-900 hover:bg-slate-800 text-brand-400 rounded transition"'} title="بەرەو سەرەوە">
+                  <i data-lucide="arrow-up" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="moveCategoryItem(${idx}, 1)" ${idx === categories.length - 1 ? 'disabled class="opacity-20 text-slate-500 p-1"' : 'class="p-1 bg-slate-900 hover:bg-slate-800 text-brand-400 rounded transition"'} title="بەرەو خوارەوە">
+                  <i data-lucide="arrow-down" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+              <span class="font-extrabold text-white text-xs">${cat.name}</span>
+            </div>
             <button onclick="deleteCategory('${cat.id}')" class="text-rose-400 p-1 hover:bg-rose-500/10 rounded"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
           </div>
+
           <div class="flex flex-wrap gap-1 text-[10px]">
             ${(cat.subcategories || []).map((sub, sIdx) => `
               <span class="bg-slate-900 text-brand-400 border border-brand-border px-2 py-0.5 rounded-full flex items-center gap-1">
@@ -1453,6 +1547,7 @@ ${itemsText}
               </span>
             `).join('')}
           </div>
+
           <div class="flex gap-1.5 pt-1">
             <input type="text" id="new_sub_${cat.id}" placeholder="براندی نوێ (وەک: ZviZZer)" class="flex-1 bg-slate-900 border border-brand-border rounded-lg p-1.5 text-[11px] text-white">
             <button onclick="handleAddSubcategory('${cat.id}')" class="px-2 py-1 bg-sky-600 text-white font-bold rounded-lg text-[10px]">زیادکردن</button>
@@ -1462,10 +1557,33 @@ ${itemsText}
       lucide.createIcons();
     }
 
+    /* سەروخوارکردنی بەشەکان و پاشەکەوتکردنی ڕیزبەندی لە سێرڤەر */
+    async function moveCategoryItem(index, direction) {
+      const targetIndex = index + direction;
+      if (targetIndex < 0 || targetIndex >= categories.length) return;
+
+      const temp = categories[index];
+      categories[index] = categories[targetIndex];
+      categories[targetIndex] = temp;
+
+      renderCategoryManagerModalList();
+      renderCategoriesBar();
+      renderAdminCategoriesFilter();
+
+      // پاشەکەوتکردنی ڕیزبەندییە نوێیەکە لە سێرڤەر
+      const orderIds = categories.map(c => c.id);
+      await dbClient.from('store_categories').upsert({
+        id: 'app_categories_order',
+        name: '_order_',
+        subcategories: orderIds
+      });
+    }
+
     async function handleAddNewCategory() {
       const name = document.getElementById('new_cat_name').value.trim();
       if (!name) return;
-      await dbClient.from('store_categories').insert({ id: 'cat-' + Date.now(), name: name, subcategories: [] });
+      const newCatId = 'cat-' + Date.now();
+      await dbClient.from('store_categories').insert({ id: newCatId, name: name, subcategories: [] });
       document.getElementById('new_cat_name').value = '';
       await loadAllData();
       renderCategoryManagerModalList();
@@ -1503,6 +1621,26 @@ ${itemsText}
       renderCategoryManagerModalList();
     }
 
+    /* فلتەری بەشەکان لە بەشی بەڕێوەبەردا */
+    function renderAdminCategoriesFilter() {
+      const container = document.getElementById('adminCategoryFilterList');
+      if (!container) return;
+
+      let html = `<button onclick="selectAdminCategory('all')" class="px-2.5 py-1 rounded-xl whitespace-nowrap font-bold text-xs transition ${activeAdminCategory === 'all' ? 'bg-amber-500 text-slate-950 shadow' : 'bg-brand-card border border-brand-border text-slate-300'}">هەمووی</button>`;
+      
+      categories.forEach(cat => {
+        const isActive = activeAdminCategory === cat.name;
+        html += `<button onclick="selectAdminCategory('${cat.name}')" class="px-2.5 py-1 rounded-xl whitespace-nowrap font-bold text-xs transition ${isActive ? 'bg-amber-500 text-slate-950 shadow' : 'bg-brand-card border border-brand-border text-slate-300'}">${cat.name}</button>`;
+      });
+      container.innerHTML = html;
+    }
+
+    function selectAdminCategory(catName) {
+      activeAdminCategory = catName;
+      renderAdminCategoriesFilter();
+      renderAdminProductsList();
+    }
+
     function openNewProductModal() {
       editingProductId = null;
       document.getElementById('productModalTitle').innerText = 'زیادکردنی کاڵای نوێ';
@@ -1511,6 +1649,8 @@ ${itemsText}
       document.getElementById('prod_price_cost').value = '';
       document.getElementById('prod_stock').value = '10';
       document.getElementById('prod_desc').value = '';
+      document.getElementById('prod_image_input').value = '';
+      document.getElementById('imagePreviewContainer').classList.add('hidden');
 
       populateCategoryDropdownForForm();
       document.getElementById('productFormModal').classList.remove('hidden');
@@ -1595,9 +1735,39 @@ ${itemsText}
       });
     }
 
+    // گوێگرتن لە هەڵبژاردنی وێنە بۆ پێشبینینی دەستبەجێ
+    document.addEventListener('DOMContentLoaded', () => {
+      const fileInput = document.getElementById('prod_image_input');
+      if (fileInput) {
+        fileInput.addEventListener('change', async function() {
+          if (this.files && this.files[0]) {
+            const base64 = await compressImageToBase64(this.files[0]);
+            document.getElementById('imagePreviewImg').src = base64;
+            document.getElementById('imagePreviewContainer').classList.remove('hidden');
+          }
+        });
+      }
+    });
+
+    /* پیشاندانی کاڵاکان لە بەڕێوەبەر لەگەڵ فلتەری بەشەکان */
     function renderAdminProductsList() {
       const container = document.getElementById('adminProductsList');
-      container.innerHTML = products.map(prod => `
+      let list = products;
+
+      if (activeAdminCategory !== 'all') {
+        list = list.filter(p => p.category === activeAdminCategory);
+      }
+
+      document.getElementById('adminProductsSectionTitle').innerText = activeAdminCategory === 'all' 
+        ? 'سەرجەم کاڵاکان لە مەخزەن' 
+        : `کاڵاکانی بەشی: ${activeAdminCategory} (${list.length})`;
+
+      if (list.length === 0) {
+        container.innerHTML = `<p class="text-center text-xs text-slate-500 py-8">هیچ کاڵایەک لەم بەشەدا نییە</p>`;
+        return;
+      }
+
+      container.innerHTML = list.map(prod => `
         <div class="bg-brand-card p-3 rounded-2xl border border-brand-border space-y-2 text-xs">
           <div class="flex items-start justify-between">
             <div class="flex items-center gap-2.5">
@@ -1634,6 +1804,7 @@ ${itemsText}
           </div>
         </div>
       `).join('');
+      lucide.createIcons();
     }
 
     async function quickUpdateStock(id, delta) {
@@ -1661,6 +1832,15 @@ ${itemsText}
       document.getElementById('prod_price_cost').value = prod.price_cost;
       document.getElementById('prod_stock').value = prod.stock;
       document.getElementById('prod_desc').value = prod.description || '';
+
+      const previewBox = document.getElementById('imagePreviewContainer');
+      const previewImg = document.getElementById('imagePreviewImg');
+      if (prod.image_url) {
+        previewImg.src = prod.image_url;
+        previewBox.classList.remove('hidden');
+      } else {
+        previewBox.classList.add('hidden');
+      }
 
       populateCategoryDropdownForForm(prod.category, prod.subcategory);
       document.getElementById('productFormModal').classList.remove('hidden');
