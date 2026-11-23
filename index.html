@@ -397,3 +397,165 @@
       box.scrollTop = box.scrollHeight;
       safeCreateIcons();
     }
+window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault(); deferredPrompt = e;
+      const btn = document.getElementById('pwaInstallBtn'); if (btn) btn.classList.remove('hidden');
+    });
+
+    function installPWA() {
+      if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(() => { deferredPrompt = null; document.getElementById('pwaInstallBtn').classList.add('hidden'); }); }
+    }
+
+    function handleSecretLogoClick() {
+      secretLogoClicks++; clearTimeout(secretLogoTimer);
+      secretLogoTimer = setTimeout(() => { secretLogoClicks = 0; }, 1500);
+      if (secretLogoClicks >= 3) { secretLogoClicks = 0; promptAdminLogin(); }
+    }
+
+    function promptAdminLogin() {
+      if (isAdminUnlocked) { toggleAdminViewMode(); return; }
+      const pin = prompt('تکایە ڕەمزی نهێنی بەڕێوەبەر بنووسە:');
+      if (pin === ADMIN_PIN) { isAdminUnlocked = true; localStorage.setItem('awena_store_admin', 'true'); alert('بەخێربێیت بۆ بەڕێوەبەرایەتی AWENA STORE!'); updateSecurityUI(); }
+      else if (pin !== null) { alert('ڕەمزی نهێنی هەڵەیە!'); }
+    }
+
+    function logoutAdmin() {
+      if (confirm('ئایا دڵنیایت لە دەرچوون لە بەشی بەڕێوەبەر؟')) { isAdminUnlocked = false; localStorage.removeItem('awena_store_admin'); updateSecurityUI(); }
+    }
+
+    function toggleAdminViewMode() {
+      const sf = document.getElementById('storefrontView'), av = document.getElementById('adminView'), nav = document.getElementById('adminBottomNav'), lbl = document.getElementById('adminToggleLabel');
+      if (av.classList.contains('hidden')) { av.classList.remove('hidden'); nav.classList.remove('hidden'); sf.classList.add('hidden'); lbl.innerText = 'فرۆشگا'; switchAdminTab('products'); }
+      else { sf.classList.remove('hidden'); av.classList.add('hidden'); nav.classList.add('hidden'); lbl.innerText = 'بەڕێوەبەر'; }
+      safeCreateIcons();
+    }
+
+    function updateSecurityUI() {
+      const badge = document.getElementById('adminBadgeArea'), sf = document.getElementById('storefrontView'), av = document.getElementById('adminView'), nav = document.getElementById('adminBottomNav');
+      if (isAdminUnlocked) { badge.classList.remove('hidden'); av.classList.remove('hidden'); nav.classList.remove('hidden'); sf.classList.add('hidden'); switchAdminTab('products'); renderAdminDashboard(); }
+      else { badge.classList.add('hidden'); av.classList.add('hidden'); nav.classList.add('hidden'); sf.classList.remove('hidden'); }
+      safeCreateIcons();
+    }
+
+    function switchAdminTab(tabName) {
+      currentAdminTab = tabName;
+      document.getElementById('adminTabProducts').classList.add('hidden');
+      document.getElementById('adminTabFinance').classList.add('hidden');
+      document.getElementById('adminTabDelivery').classList.add('hidden');
+      document.querySelectorAll('.admin-nav-btn').forEach(btn => { btn.className = 'admin-nav-btn py-1.5 px-2 rounded-xl flex flex-col items-center justify-center text-slate-400 text-[11px] font-semibold'; });
+      if (tabName === 'products') {
+        document.getElementById('adminTabProducts').classList.remove('hidden');
+        const b = document.getElementById('adminNav-products'); if (b) b.className = 'admin-nav-btn py-1.5 px-2 rounded-xl flex flex-col items-center justify-center text-brand-400 font-extrabold text-[11px] bg-brand-500/10 border border-brand-500/20';
+        renderAdminCategoriesFilter(); renderAdminProductsList();
+      } else if (tabName === 'finance') {
+        document.getElementById('adminTabFinance').classList.remove('hidden');
+        const b = document.getElementById('adminNav-finance'); if (b) b.className = 'admin-nav-btn py-1.5 px-2 rounded-xl flex flex-col items-center justify-center text-emerald-400 font-extrabold text-[11px] bg-emerald-500/10 border border-emerald-500/20';
+      } else if (tabName === 'delivery') {
+        document.getElementById('adminTabDelivery').classList.remove('hidden');
+        const b = document.getElementById('adminNav-delivery'); if (b) b.className = 'admin-nav-btn py-1.5 px-2 rounded-xl flex flex-col items-center justify-center text-sky-400 font-extrabold text-[11px] bg-sky-500/10 border border-sky-500/20';
+      }
+      safeCreateIcons();
+    }
+
+    async function loadAllData() {
+      renderStorefront();
+      if (!dbClient) return;
+      try {
+        const res = await Promise.all([
+          dbClient.from('store_categories').select('*'),
+          dbClient.from('store_products').select('*').order('created_at', { ascending: false }),
+          dbClient.from('store_delivery_rates').select('*'),
+          dbClient.from('store_orders').select('*').order('created_at', { ascending: false })
+        ]);
+        const catRes = res[0], prodRes = res[1], delRes = res[2], ordRes = res[3];
+        if (catRes.data) {
+          const orderSetting = catRes.data.find(c => c.id === 'app_categories_order');
+          let rawCats = catRes.data.filter(c => c.id !== 'app_categories_order');
+          if (orderSetting && Array.isArray(orderSetting.subcategories)) {
+            const orderIds = orderSetting.subcategories;
+            rawCats.sort((a, b) => {
+              let idxA = orderIds.indexOf(a.id), idxB = orderIds.indexOf(b.id);
+              return (idxA === -1 ? 999 : idxA) - (idxB === -1 ? 999 : idxB);
+            });
+          }
+          categories = rawCats; localStorage.setItem('awena_store_categories_cache', JSON.stringify(categories));
+        }
+        if (prodRes.data) { products = prodRes.data; localStorage.setItem('awena_store_products_cache', JSON.stringify(products)); }
+        if (delRes.data) { deliveryRates = delRes.data; localStorage.setItem('awena_store_delivery_cache', JSON.stringify(deliveryRates)); }
+        if (ordRes.data) { orders = ordRes.data; localStorage.setItem('awena_store_orders_cache', JSON.stringify(orders)); }
+        renderStorefront();
+        if (isAdminUnlocked) renderAdminDashboard();
+      } catch (err) { console.error(err); }
+    }
+
+    function renderStorefront() { renderCategoriesBar(); renderSubcategoriesBar(); renderProductsGrid(); updateCartUI(); safeCreateIcons(); }
+
+    function renderCategoriesBar() {
+      const container = document.getElementById('mainCategoriesList'); if (!container) return;
+      let html = '<button onclick="selectCategory(\'all\')" class="cat-pill px-3 py-1.5 rounded-xl whitespace-nowrap font-bold text-xs ' + (activeCategory === 'all' ? 'bg-brand-500 text-white shadow' : 'bg-brand-card border border-brand-border text-slate-300') + '">هەمووی</button>';
+      categories.forEach(cat => {
+        html += '<button onclick="selectCategory(\'' + cat.name + '\')" class="cat-pill px-3 py-1.5 rounded-xl whitespace-nowrap font-bold text-xs ' + (activeCategory === cat.name ? 'bg-brand-500 text-white shadow' : 'bg-brand-card border border-brand-border text-slate-300') + '">' + cat.name + '</button>';
+      });
+      container.innerHTML = html;
+    }
+
+    function selectCategory(catName) { activeCategory = catName; activeSubcategory = 'all'; renderStorefront(); }
+
+    function renderSubcategoriesBar() {
+      const sec = document.getElementById('subcategoriesSection'), con = document.getElementById('subcategoriesList');
+      if (!sec || !con) return;
+      if (activeCategory === 'all') { sec.classList.add('hidden'); return; }
+      const cur = categories.find(c => c.name === activeCategory);
+      if (!cur || !cur.subcategories || cur.subcategories.length === 0) { sec.classList.add('hidden'); return; }
+      sec.classList.remove('hidden');
+      let html = '<button onclick="selectSubcategory(\'all\')" class="px-2.5 py-1 rounded-lg whitespace-nowrap font-semibold text-[11px] ' + (activeSubcategory === 'all' ? 'bg-sky-600 text-white' : 'bg-slate-900 text-slate-400 border border-brand-border') + '">هەموو براندەکان</button>';
+      cur.subcategories.forEach(sub => {
+        html += '<button onclick="selectSubcategory(\'' + sub + '\')" class="px-2.5 py-1 rounded-lg whitespace-nowrap font-semibold text-[11px] ' + (activeSubcategory === sub ? 'bg-sky-600 text-white' : 'bg-slate-900 text-slate-400 border border-brand-border') + '">' + sub + '</button>';
+      });
+      con.innerHTML = html;
+    }
+
+    function selectSubcategory(subName) { activeSubcategory = subName; renderProductsGrid(); safeCreateIcons(); }
+    function handleSearch(q) { searchQuery = q.toLowerCase().trim(); renderProductsGrid(); }
+    function handleSortChange(sortVal) { currentSort = sortVal; renderProductsGrid(); }
+
+    function getFilteredProducts() {
+      let list = products.filter(p => p.is_visible !== false);
+      if (activeCategory !== 'all') list = list.filter(p => p.category === activeCategory);
+      if (activeSubcategory !== 'all') list = list.filter(p => p.subcategory === activeSubcategory);
+      if (searchQuery) list = list.filter(p => p.name.toLowerCase().includes(searchQuery) || (p.subcategory && p.subcategory.toLowerCase().includes(searchQuery)));
+      if (currentSort === 'newest') list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      else if (currentSort === 'oldest') list.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+      else if (currentSort === 'price_low') list.sort((a, b) => a.price_sale - b.price_sale);
+      else if (currentSort === 'price_high') list.sort((a, b) => b.price_sale - a.price_sale);
+      return list;
+    }
+
+    function renderProductsGrid() {
+      const container = document.getElementById('productsGrid'); if (!container) return;
+      const list = getFilteredProducts();
+      const badge = document.getElementById('productCountBadge'); if (badge) badge.innerText = list.length + ' کاڵا';
+      if (list.length === 0) { container.innerHTML = '<p class="col-span-2 text-center text-xs text-slate-500 py-10">هیچ کاڵایەک نەدۆزرایەوە</p>'; return; }
+
+      container.innerHTML = list.map(prod => {
+        const cItem = cart.find(c => c.id === prod.id);
+        const qty = cItem ? cItem.qty : 0;
+        const imgUrl = prod.image_url || 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=400&q=80';
+        const subBadge = prod.subcategory ? '<span class="absolute top-1.5 start-1.5 text-[9px] bg-black/90 text-brand-400 font-bold px-1.5 py-0.5 rounded border border-brand-border">' + prod.subcategory + '</span>' : '';
+        const outBadge = prod.stock <= 0 ? '<span class="absolute inset-0 bg-black/85 flex items-center justify-center text-rose-400 font-bold text-[11px]">لە مەخزەن نەماوە</span>' : '';
+        const stockText = prod.stock > 0 ? (prod.stock <= 3 ? '<span class="text-amber-400">تەنها ' + prod.stock + ' دانە ماوە</span>' : '🟢 بەردەستە') : '❌ تەواو بووە';
+        const btnHtml = prod.stock > 0 ? (qty > 0
+          ? '<div class="flex items-center bg-black border border-brand-500/40 rounded-xl p-0.5"><button type="button" onclick="event.stopPropagation(); changeCartQty(\'' + prod.id + '\', 1)" class="w-6 h-6 bg-brand-600 text-white rounded-lg flex items-center justify-center font-black text-xs">+</button><span class="font-mono font-black text-xs text-amber-400 px-1.5 min-w-[20px] text-center">' + qty + '</span><button type="button" onclick="event.stopPropagation(); changeCartQty(\'' + prod.id + '\', -1)" class="w-6 h-6 bg-slate-800 text-slate-300 rounded-lg flex items-center justify-center font-black text-xs">-</button></div>'
+          : '<button type="button" onclick="event.stopPropagation(); addToCart(\'' + prod.id + '\')" class="w-7 h-7 bg-brand-600 text-white rounded-lg flex items-center justify-center"><i data-lucide="plus" class="w-4 h-4"></i></button>')
+          : '<span class="text-[10px] text-slate-600 font-bold">بێ مەخزەن</span>';
+
+        return '<div class="bg-brand-card rounded-2xl border border-brand-border overflow-hidden p-2.5 flex flex-col justify-between space-y-2">' +
+          '<div onclick="openProductDetailModal(\'' + prod.id + '\')" class="cursor-pointer space-y-1.5">' +
+            '<div class="h-36 bg-black rounded-xl overflow-hidden border border-brand-border/80 flex items-center justify-center relative"><img src="' + imgUrl + '" class="w-full h-full object-contain">' + subBadge + outBadge + '</div>' +
+            '<div><h3 class="font-bold text-xs text-white line-clamp-2 leading-snug">' + prod.name + '</h3><span class="text-[10px] text-slate-400 mt-0.5 block">' + stockText + '</span></div>' +
+          '</div>' +
+          '<div class="flex items-center justify-between pt-1 border-t border-brand-border/60"><span class="font-black text-xs text-emerald-400">' + Number(prod.price_sale).toLocaleString() + ' <span class="text-[9px]">د.ع</span></span>' + btnHtml + '</div>' +
+        '</div>';
+      }).join('');
+      safeCreateIcons();
+    }
