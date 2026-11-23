@@ -259,3 +259,141 @@
       <div id="categoriesManagerList" class="space-y-2"></div>
     </div>
   </div>
+  <script>
+    const SUPABASE_URL = 'https://yryszfvdokaplaweqatj.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlyeXN6ZnZkb2thcGxhd2VxYXRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyMDQ3NjgsImV4cCI6MjEwODc4MDc2OH0.aMJQI1EvLr1Yf6vEzj9rDEsGzLZByyzZQWbQrqSb3WQ';
+    const ADMIN_PIN = 'AWENA2003';
+    const WHATSAPP_PHONE = '9647709663858';
+
+    let dbClient = null;
+    try { if (window.supabase) dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY); } catch(e) {}
+
+    let categories = JSON.parse(localStorage.getItem('awena_store_categories_cache')) || [
+      { id: 'cat-1', name: 'پۆڵیش و نانۆ', subcategories: ['ZviZZer', 'Koch-Chemie', 'Menzerna', 'Sonax'] },
+      { id: 'cat-2', name: 'مەوادی شوشتن', subcategories: ['شامپۆی نانۆ', 'پاککەرەوەی ویل', 'فۆم'] },
+      { id: 'cat-3', name: 'خاولی و مایکرۆفایبەر', subcategories: ['خاولی وشککردنەوە', 'پەڕۆی پۆڵیش'] }
+    ];
+    let products = JSON.parse(localStorage.getItem('awena_store_products_cache')) || [];
+    let deliveryRates = JSON.parse(localStorage.getItem('awena_store_delivery_cache')) || [
+      { city: 'هەڵەبجە', rate: 2000 }, { city: 'سلێمانی', rate: 3000 }, { city: 'هەولێر', rate: 4000 }, { city: 'دهۆک و زاخۆ', rate: 5000 }, { city: 'کەرکووک', rate: 4000 }
+    ];
+    let orders = JSON.parse(localStorage.getItem('awena_store_orders_cache')) || [];
+    let cart = [];
+
+    let activeCategory = 'all', activeSubcategory = 'all', activeAdminCategory = 'all';
+    let currentSort = 'newest', searchQuery = '', selectedModalProduct = null, editingProductId = null;
+    let currentAdminTab = 'products', expandedCustomerPhone = null, aiChatContextProduct = null, isAILoading = false;
+    let isAdminUnlocked = localStorage.getItem('awena_store_admin') === 'true';
+    let secretLogoClicks = 0, secretLogoTimer = null, deferredPrompt = null;
+    let modalZoomScale = 1, modalPanX = 0, modalPanY = 0, initialPinchDist = 0, initialScale = 1;
+    let isTouchingModalImg = false, touchStartX = 0, touchStartY = 0, lastTapModalTime = 0;
+
+    const ALL_MODALS = ['productDetailModal', 'checkoutModal', 'productFormModal', 'categoryManagerModal', 'directSaleModal', 'aiChatModal'];
+
+    function safeCreateIcons() {
+      try { if (window.lucide && typeof window.lucide.createIcons === 'function') window.lucide.createIcons(); } catch (e) {}
+    }
+
+    function pushModalHistory(modalId) {
+      if (!history.state || history.state.modal !== modalId) history.pushState({ modal: modalId }, '');
+    }
+
+    function closeModalSafely(modalId) {
+      const el = document.getElementById(modalId);
+      if (!el || el.classList.contains('hidden')) return;
+      el.classList.add('hidden');
+      if (modalId === 'productDetailModal') resetModalZoom();
+      if (history.state && history.state.modal === modalId) history.back();
+    }
+
+    window.addEventListener('popstate', () => {
+      ALL_MODALS.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !el.classList.contains('hidden')) {
+          el.classList.add('hidden');
+          if (id === 'productDetailModal') resetModalZoom();
+        }
+      });
+    });
+
+    function openAIChatModal(product) {
+      aiChatContextProduct = product || null;
+      const subtitle = document.getElementById('aiChatSubtitle');
+      const chipsBox = document.getElementById('aiQuickChips');
+      const messagesBox = document.getElementById('aiChatMessages');
+
+      if (product) {
+        subtitle.innerText = 'دەربارەی: ' + product.name;
+        messagesBox.innerHTML = '<div class="flex gap-2 items-start"><div class="w-7 h-7 rounded-lg bg-sky-600/20 border border-sky-500/30 flex items-center justify-center shrink-0 text-sky-400"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i></div><div class="bg-brand-card border border-brand-border p-3 rounded-2xl rounded-tr-none text-slate-200 leading-relaxed max-w-[85%]">سڵاو بەڕێز! هەر پرسیارێکت هەیە دەربارەی <strong class="text-sky-400">' + product.name + '</strong> بفەرموو، بە کوردییەکی سادە وەڵامت دەدەمەوە!</div></div>';
+        const quickQs = ['ئەم بەرهەمە چۆن بەکاربهێنم؟', 'بۆ کام جۆری بۆیاخ دەبێت؟', 'لەگەڵ چی بەکاریبهێنم باشترینە؟'];
+        chipsBox.innerHTML = quickQs.map(q => '<button type="button" onclick="sendQuickAIQuestion(\'' + q + '\')" class="px-2.5 py-1.5 bg-slate-900 border border-brand-border rounded-xl text-[10px] text-sky-300 whitespace-nowrap">' + q + '</button>').join('');
+      } else {
+        subtitle.innerText = 'پرسیاری گشتی و پێشنیارکردنی مەواد';
+        messagesBox.innerHTML = '<div class="flex gap-2 items-start"><div class="w-7 h-7 rounded-lg bg-sky-600/20 border border-sky-500/30 flex items-center justify-center shrink-0 text-sky-400"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i></div><div class="bg-brand-card border border-brand-border p-3 rounded-2xl rounded-tr-none text-slate-200 leading-relaxed max-w-[85%]">بەخێربێیت بۆ فرۆشگای <strong>AWENA STORE</strong>! هەر پرسیارێکت هەیە لەسەر پۆڵیش، شتن، لابردنی کڕان، یان پێشنیاری مەواد بفەرموو.</div></div>';
+        const quickQs = ['سەیارەکەم کڕانی وردی هەیە، چی بکڕم؟', 'باشترین مەواد بۆ شتنی سەیارە چییە؟', 'جیاوازی پۆڵیش و واکس و نانۆ چییە؟'];
+        chipsBox.innerHTML = quickQs.map(q => '<button type="button" onclick="sendQuickAIQuestion(\'' + q + '\')" class="px-2.5 py-1.5 bg-slate-900 border border-brand-border rounded-xl text-[10px] text-sky-300 whitespace-nowrap">' + q + '</button>').join('');
+      }
+      document.getElementById('aiChatModal').classList.remove('hidden');
+      pushModalHistory('aiChatModal');
+      safeCreateIcons();
+    }
+
+    function closeAIChatModal() { closeModalSafely('aiChatModal'); }
+    function askAIAboutCurrentProduct() {
+      if (selectedModalProduct) { const p = selectedModalProduct; closeProductDetailModal(); setTimeout(() => openAIChatModal(p), 120); }
+    }
+    function sendQuickAIQuestion(q) { document.getElementById('aiUserInput').value = q; handleSendAIMessage(new Event('submit')); }
+
+    async function handleSendAIMessage(e) {
+      e.preventDefault();
+      if (isAILoading) return;
+      const input = document.getElementById('aiUserInput');
+      const question = input.value.trim();
+      if (!question) return;
+      input.value = '';
+      appendAIMessage('user', question);
+
+      const loadingId = 'ai-loading-' + Date.now();
+      const box = document.getElementById('aiChatMessages');
+      const lDiv = document.createElement('div');
+      lDiv.id = loadingId;
+      lDiv.className = 'flex gap-2 items-start';
+      lDiv.innerHTML = '<div class="w-7 h-7 rounded-lg bg-sky-600/20 flex items-center justify-center text-sky-400"><i data-lucide="sparkles" class="w-3.5 h-3.5 animate-spin"></i></div><div class="bg-brand-card border border-brand-border px-3 py-2 rounded-2xl text-sky-400 text-[11px]">خەریکی وەڵامدانەوەیە...</div>';
+      box.appendChild(lDiv);
+      box.scrollTop = box.scrollHeight;
+      safeCreateIcons();
+
+      isAILoading = true;
+      document.getElementById('aiSendBtn').disabled = true;
+
+      try {
+        const catalogPayload = products.filter(p => p.is_visible !== false).map(p => ({ name: p.name, category: p.category, brand: p.subcategory, price: p.price_sale, stock: p.stock, desc: p.description }));
+        if (!dbClient) throw new Error('No DB');
+        const { data, error } = await dbClient.functions.invoke('awena-ai', { body: { question: question, product: aiChatContextProduct, catalog: catalogPayload } });
+        const el = document.getElementById(loadingId); if (el) el.remove();
+        if (error) appendAIMessage('ai', 'ببورە، کێشەیەک لە پەیوەندی سێرڤەر ڕوویدا.');
+        else if (data && data.reply) appendAIMessage('ai', data.reply);
+        else if (data && data.error) appendAIMessage('ai', 'هەڵە: ' + data.error);
+      } catch (err) {
+        const el = document.getElementById(loadingId); if (el) el.remove();
+        appendAIMessage('ai', 'ببورە، هێڵی ئینتەرنێت کێشەی هەیە.');
+      }
+      isAILoading = false;
+      document.getElementById('aiSendBtn').disabled = false;
+    }
+
+    function appendAIMessage(sender, text) {
+      const box = document.getElementById('aiChatMessages');
+      const div = document.createElement('div');
+      const formatted = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>').replace(/\n/g, '<br>');
+      if (sender === 'user') {
+        div.className = 'flex justify-end';
+        div.innerHTML = '<div class="bg-sky-600 text-white p-3 rounded-2xl rounded-tl-none max-w-[85%] leading-relaxed shadow">' + formatted + '</div>';
+      } else {
+        div.className = 'flex gap-2 items-start';
+        div.innerHTML = '<div class="w-7 h-7 rounded-lg bg-sky-600/20 border border-sky-500/30 flex items-center justify-center shrink-0 text-sky-400"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i></div><div class="bg-brand-card border border-brand-border p-3 rounded-2xl rounded-tr-none text-slate-200 leading-relaxed max-w-[85%]">' + formatted + '</div>';
+      }
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+      safeCreateIcons();
+    }
