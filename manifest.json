@@ -1,19 +1,19 @@
 {
-  "name": "AWENA STORE — فرۆشگای ئاوێنە",
-  "short_name": "AWENA STORE",
+  "name": "ئاوێنە ستۆر — AWENA STORE",
+  "short_name": "ئاوێنە ستۆر",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0d1117",
-  "theme_color": "#0d1117",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "dir": "rtl",
   "lang": "ckb",
   "icons": [
     {
-      "src": "https://ui-avatars.com/api/?name=AW&size=512&background=0d1117&color=38bdf8&bold=true&format=png&length=2",
+      "src": "https://yryszfvdokaplaweqatj.supabase.co/storage/v1/object/public/assets/logo.png",
       "sizes": "192x192 512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }
