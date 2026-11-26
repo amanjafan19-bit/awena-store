@@ -1,4 +1,4 @@
-const CACHE_NAME = 'awena-store-v8';
+const CACHE_NAME = 'awena-store-v10';
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
